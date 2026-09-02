@@ -289,62 +289,6 @@ st.markdown(
             overflow: hidden !important;
         }
 
-        /* True compact 2x2 mobile navigation */
-        .st-key-mobile_nav_row_1,
-        .st-key-mobile_nav_row_2 {
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow: hidden !important;
-        }
-
-        .st-key-mobile_nav_row_1 div[data-testid="stHorizontalBlock"],
-        .st-key-mobile_nav_row_2 div[data-testid="stHorizontalBlock"] {
-            display: grid !important;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
-            gap: 0.45rem !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow: hidden !important;
-        }
-
-        .st-key-mobile_nav_row_1 div[data-testid="column"],
-        .st-key-mobile_nav_row_2 div[data-testid="column"] {
-            min-width: 0 !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            flex: none !important;
-        }
-
-        .st-key-mobile_navcard_log,
-        .st-key-mobile_navcard_progress,
-        .st-key-mobile_navcard_history,
-        .st-key-mobile_navcard_bodyweight {
-            min-width: 0 !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            min-height: 88px !important;
-            padding: 0.28rem 0.18rem 0.30rem 0.18rem !important;
-            border-radius: 9px !important;
-            overflow: hidden !important;
-        }
-
-        .rpl-mobile-nav-icon {
-            width: 30px !important;
-            height: 30px !important;
-            margin: 0 auto 0 !important;
-        }
-
-        .st-key-mobile_nav_log button,
-        .st-key-mobile_nav_progress button,
-        .st-key-mobile_nav_history button,
-        .st-key-mobile_nav_bodyweight button {
-            font-size: 0.67rem !important;
-            line-height: 1 !important;
-            min-height: 1.55rem !important;
-            padding: 0.05rem !important;
-            white-space: normal !important;
-        }
-
         /* Selected mobile card keeps the same look, just scaled down */
         .st-key-mobile_navcard_log::after,
         .st-key-mobile_navcard_progress::after,
@@ -502,12 +446,7 @@ def active_card_css(prefix: str, section: str) -> str:
     """
 
 
-if mobile:
-    st.markdown(
-        f"<style>{active_card_css('mobile_navcard', active)}</style>",
-        unsafe_allow_html=True,
-    )
-else:
+if not mobile:
     st.markdown(
         f"<style>{active_card_css('navcard', active)}</style>",
         unsafe_allow_html=True,
@@ -602,40 +541,180 @@ def render_desktop_navigation():
 
 
 
-def _render_mobile_nav_item(col, section, label, icon, card_key, button_key):
-    with col:
-        with st.container(key=card_key):
-            st.markdown(
-                _icon_html(icon, "rpl-mobile-nav-icon"),
-                unsafe_allow_html=True,
-            )
-            if st.button(label, key=button_key, use_container_width=True):
-                st.session_state["active_section"] = section
-                st.rerun()
-
 
 def render_mobile_navigation():
-    with st.container(key="mobile_nav_row_1"):
-        c1, c2 = st.columns(2, gap="small")
-        _render_mobile_nav_item(
-            c1, "log", "Log Workout", ICON_WORKOUT,
-            "mobile_navcard_log", "mobile_nav_log"
-        )
-        _render_mobile_nav_item(
-            c2, "progress", "Progress", ICON_PROGRESS,
-            "mobile_navcard_progress", "mobile_nav_progress"
-        )
+    """
+    Mobile uses ONE native Streamlit radio widget, styled as a 2x2 card grid.
 
-    with st.container(key="mobile_nav_row_2"):
-        c3, c4 = st.columns(2, gap="small")
-        _render_mobile_nav_item(
-            c3, "history", "History", ICON_HISTORY,
-            "mobile_navcard_history", "mobile_nav_history"
-        )
-        _render_mobile_nav_item(
-            c4, "bodyweight", "Body Weight", ICON_BODY,
-            "mobile_navcard_bodyweight", "mobile_nav_bodyweight"
-        )
+    This avoids st.columns entirely, because Streamlit's mobile column
+    stacking/width rules were causing horizontal overflow on phones.
+    """
+    options = ["log", "progress", "history", "bodyweight"]
+    labels = {
+        "log": "Log Workout",
+        "progress": "Progress",
+        "history": "History",
+        "bodyweight": "Body Weight",
+    }
+
+    icon_uris = {
+        "log": _data_uri(ICON_WORKOUT),
+        "progress": _data_uri(ICON_PROGRESS),
+        "history": _data_uri(ICON_HISTORY),
+        "bodyweight": _data_uri(ICON_BODY),
+    }
+
+    st.markdown(
+        f"""
+        <style>
+        /* The whole widget is a true two-column grid. No Streamlit columns. */
+        .st-key-mobile_nav_radio div[role="radiogroup"] {{
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 0.48rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }}
+
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label {{
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            min-height: 94px !important;
+            margin: 0 !important;
+            padding: 0.48rem 0.25rem 0.40rem 0.25rem !important;
+            border: 1px solid #343940 !important;
+            border-radius: 10px !important;
+            background: #111419 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 0.22rem !important;
+            position: relative !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }}
+
+        /* Hide the normal radio dot. */
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label > div:first-child {{
+            display: none !important;
+        }}
+
+        /* Label text */
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label p {{
+            margin: 0 !important;
+            padding-top: 2.25rem !important;
+            text-align: center !important;
+            font-size: 0.76rem !important;
+            line-height: 1.08 !important;
+            font-weight: 700 !important;
+            color: #f1f2f4 !important;
+            white-space: normal !important;
+        }}
+
+        /* Icons */
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(1)::before,
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(2)::before,
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(3)::before,
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(4)::before {{
+            content: "";
+            position: absolute;
+            top: 0.65rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 36px;
+            height: 36px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }}
+
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(1)::before {{
+            background-image: url("{icon_uris['log']}");
+        }}
+
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(2)::before {{
+            background-image: url("{icon_uris['progress']}");
+        }}
+
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(3)::before {{
+            background-image: url("{icon_uris['history']}");
+        }}
+
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(4)::before {{
+            background-image: url("{icon_uris['bodyweight']}");
+        }}
+
+        /* Selected card */
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked) {{
+            border-color: #ff3932 !important;
+            background:
+                radial-gradient(
+                    circle at 18% 18%,
+                    rgba(255, 50, 40, 0.25),
+                    rgba(255, 50, 40, 0.08) 36%,
+                    rgba(0,0,0,0) 72%
+                ),
+                #171216 !important;
+            box-shadow:
+                inset 0 -4px 0 #ff2a23,
+                inset 0 0 24px rgba(255,42,35,0.05),
+                0 0 18px rgba(255,42,35,0.12) !important;
+        }}
+
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked) p {{
+            color: #ff4b45 !important;
+        }}
+
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked)::after {{
+            content: "";
+            position: absolute;
+            left: 40%;
+            right: 40%;
+            bottom: 0.30rem;
+            height: 3px;
+            border-radius: 999px;
+            background: #ff2a23;
+            box-shadow: 0 0 8px rgba(255,42,35,0.45);
+        }}
+
+        @media (max-width: 420px) {{
+            .st-key-mobile_nav_radio div[role="radiogroup"] > label {{
+                min-height: 88px !important;
+            }}
+
+            .st-key-mobile_nav_radio div[role="radiogroup"] > label p {{
+                font-size: 0.70rem !important;
+                padding-top: 2.1rem !important;
+            }}
+
+            .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(1)::before,
+            .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(2)::before,
+            .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(3)::before,
+            .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(4)::before {{
+                width: 32px;
+                height: 32px;
+            }}
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    selected = st.radio(
+        "Navigation",
+        options,
+        index=options.index(active),
+        format_func=lambda value: labels[value],
+        horizontal=True,
+        label_visibility="collapsed",
+        key="mobile_nav_radio",
+    )
+
+    if selected != active:
+        st.session_state["active_section"] = selected
+        st.rerun()
 
 
 if mobile:

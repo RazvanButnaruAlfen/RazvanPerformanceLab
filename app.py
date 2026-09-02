@@ -10,12 +10,29 @@ from Pages.progress import render as render_progress
 from Pages.workout_history import render as render_workout_history
 from Services.auth import get_profile, is_authenticated, sign_out
 
+APP_LOGO = Path("Assets/login_logo.png")
+HEADER_TRAINING_BG = Path("Assets/header_training_bg.png")
+ICON_WORKOUT = Path("Assets/icon_workout.png")
+ICON_PROGRESS = Path("Assets/icon_progress.png")
+ICON_HISTORY = Path("Assets/icon_history.png")
+ICON_BODY = Path("Assets/icon_body.png")
+
 st.set_page_config(
     page_title="Razvan Performance Lab",
     page_icon="Assets/app_icon.png",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+
+
+def _data_uri(path: Path) -> str:
+    if not path.exists():
+        return ""
+    return "data:image/png;base64," + base64.b64encode(path.read_bytes()).decode()
+
+
+logo_uri = _data_uri(APP_LOGO)
+training_bg_uri = _data_uri(HEADER_TRAINING_BG)
 
 st.markdown(
     """
@@ -37,78 +54,186 @@ st.markdown(
     }
 
     .block-container {
-        max-width: 1500px;
-        padding-top: 0.7rem;
+        max-width: 1580px;
+        padding-top: 0.55rem;
         padding-bottom: 2rem;
-        padding-left: 1.7rem;
-        padding-right: 1.7rem;
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
     }
 
-    .rpl-inside-header {
+    /* =========================
+       TOP BRAND HEADER
+       ========================= */
+    .rpl-top-shell {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 0.42fr;
+        gap: 0.9rem;
+        align-items: stretch;
+        margin-bottom: 0.8rem;
+    }
+
+    .rpl-logo-panel,
+    .rpl-training-panel,
+    .rpl-signout-panel {
+        background:
+            linear-gradient(180deg, rgba(18,20,24,0.98), rgba(8,10,13,0.98));
+        border: 1px solid #252a31;
+        border-radius: 14px;
+        min-height: 154px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .rpl-logo-panel {
         display: flex;
         align-items: center;
-        min-height: 92px;
+        padding: 0.9rem 1.2rem;
     }
 
-    .rpl-inside-logo {
-        display: block;
-        width: 455px;
-        max-width: 100%;
+    .rpl-logo-panel img {
+        width: 100%;
+        max-width: 560px;
         height: auto;
+        display: block;
     }
 
-    .rpl-userline {
-        color: #a8abb1;
-        font-size: 0.95rem;
-        margin-top: 0.2rem;
+    .rpl-training-panel {
+        background-image:
+            linear-gradient(90deg, rgba(8,10,13,0.12) 0%, rgba(8,10,13,0.70) 44%, rgba(8,10,13,0.98) 78%),
+            url("__TRAINING_BG__");
+        background-size: cover;
+        background-position: left center;
+    }
+
+    .rpl-training-copy {
+        position: absolute;
+        right: 1.25rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 55%;
+        text-align: left;
+    }
+
+    .rpl-training-kicker {
+        color: #d8dadd;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        margin-bottom: 0.18rem;
+    }
+
+    .rpl-training-name {
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        text-transform: uppercase;
+        padding-bottom: 0.42rem;
+        border-bottom: 1px solid #bd1b18;
+        text-shadow: 0 0 16px rgba(255,255,255,0.08);
+    }
+
+    .rpl-training-tagline {
+        color: #aeb2b9;
+        font-size: 0.72rem;
+        letter-spacing: 0.20em;
+        margin-top: 0.5rem;
+        text-transform: uppercase;
+    }
+
+    .rpl-signout-panel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.8rem;
+    }
+
+    .st-key-header_sign_out {
+        width: 100%;
     }
 
     .st-key-header_sign_out button {
-        background: linear-gradient(90deg, #c90909 0%, #ff2a23 100%) !important;
-        border: 1px solid #ff443e !important;
-        color: #ffffff !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.035em !important;
-        min-height: 2.85rem !important;
-        border-radius: 8px !important;
-        box-shadow: 0 0 20px rgba(255, 42, 35, 0.14);
+        width: 100% !important;
+        min-height: 3.55rem !important;
+        background: linear-gradient(90deg, #c60b0b 0%, #ff2b23 100%) !important;
+        border: 1px solid #ff463f !important;
+        color: #fff !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.045em !important;
+        border-radius: 10px !important;
+        box-shadow: 0 0 28px rgba(255, 42, 35, 0.20);
+    }
+
+    .st-key-header_sign_out button:hover {
+        filter: brightness(1.08);
+        border-color: #ff716c !important;
+    }
+
+    /* =========================
+       NAVIGATION CARDS
+       ========================= */
+    .rpl-nav-section {
+        margin-top: 0.2rem;
+        margin-bottom: 1.25rem;
     }
 
     .rpl-nav-icon-wrap {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 42px;
-        margin-bottom: 0.25rem;
+        height: 48px;
+        margin-bottom: 0.2rem;
     }
 
     .rpl-nav-icon-wrap img {
-        width: 34px;
-        height: 34px;
+        width: 40px;
+        height: 40px;
         object-fit: contain;
         display: block;
     }
 
-    /* Navigation cards */
     .st-key-navcard_log,
     .st-key-navcard_progress,
     .st-key-navcard_history,
     .st-key-navcard_bodyweight {
-        border: 1px solid #2d3138 !important;
-        background: #111419 !important;
-        border-radius: 12px !important;
-        padding: 0.55rem 0.55rem 0.45rem 0.55rem !important;
-        min-height: 108px;
-        transition: 0.15s ease;
+        border: 1px solid #343940 !important;
+        background:
+            linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.0) 45%),
+            #111419 !important;
+        border-radius: 14px !important;
+        padding: 0.75rem 0.75rem 0.55rem 0.75rem !important;
+        min-height: 132px;
+        transition: 0.16s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .st-key-navcard_log::after,
+    .st-key-navcard_progress::after,
+    .st-key-navcard_history::after,
+    .st-key-navcard_bodyweight::after {
+        content: "";
+        position: absolute;
+        left: 44%;
+        right: 44%;
+        bottom: 0.55rem;
+        height: 3px;
+        border-radius: 999px;
+        background: #e32722;
+        opacity: 0.78;
     }
 
     .st-key-navcard_log:hover,
     .st-key-navcard_progress:hover,
     .st-key-navcard_history:hover,
     .st-key-navcard_bodyweight:hover {
-        border-color: #5b626c !important;
-        background: #15191f !important;
-        transform: translateY(-1px);
+        transform: translateY(-2px);
+        border-color: #60666f !important;
+        background:
+            linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.0) 45%),
+            #15191f !important;
     }
 
     .st-key-nav_log button,
@@ -117,14 +242,15 @@ st.markdown(
     .st-key-nav_bodyweight button {
         background: transparent !important;
         border: 0 !important;
-        color: #eceef1 !important;
-        font-weight: 650 !important;
-        min-height: 2.3rem !important;
+        color: #f2f3f5 !important;
+        font-weight: 750 !important;
+        min-height: 2.2rem !important;
         width: 100% !important;
         box-shadow: none !important;
         text-align: center !important;
         justify-content: center !important;
-        padding: 0.25rem !important;
+        font-size: 0.98rem !important;
+        padding: 0.2rem !important;
     }
 
     __ACTIVE_CSS__
@@ -134,92 +260,113 @@ st.markdown(
         overflow-x: auto;
     }
 
+    /* =========================
+       MOBILE
+       ========================= */
     @media (max-width: 768px) {
         .block-container {
-            padding-top: 0.4rem;
-            padding-bottom: 1.2rem;
-            padding-left: 0.7rem;
-            padding-right: 0.7rem;
+            padding-top: 0.35rem;
+            padding-bottom: 1rem;
+            padding-left: 0.6rem;
+            padding-right: 0.6rem;
         }
 
-        .rpl-inside-header {
-            min-height: 66px;
+        .rpl-top-shell {
+            grid-template-columns: 1fr auto;
+            grid-template-areas:
+                "logo signout"
+                "training training";
+            gap: 0.5rem;
         }
 
-        .rpl-inside-logo {
-            width: 310px;
+        .rpl-logo-panel {
+            grid-area: logo;
+            min-height: 82px;
+            padding: 0.55rem 0.7rem;
         }
 
-        .rpl-userline {
-            font-size: 0.82rem;
+        .rpl-logo-panel img {
+            max-width: 265px;
         }
 
-        .st-key-rpl_header div[data-testid="stHorizontalBlock"] {
-            flex-wrap: nowrap !important;
-            align-items: center !important;
+        .rpl-signout-panel {
+            grid-area: signout;
+            min-height: 82px;
+            width: 108px;
+            padding: 0.45rem;
         }
 
-        .st-key-rpl_header div[data-testid="column"]:first-child {
-            min-width: 0 !important;
-            flex: 1 1 auto !important;
+        .rpl-training-panel {
+            grid-area: training;
+            min-height: 106px;
+            background-position: left center;
         }
 
-        .st-key-rpl_header div[data-testid="column"]:last-child {
-            min-width: 105px !important;
-            width: 105px !important;
-            flex: 0 0 105px !important;
+        .rpl-training-copy {
+            right: 0.8rem;
+            width: 60%;
+        }
+
+        .rpl-training-kicker {
+            font-size: 0.62rem;
+            letter-spacing: 0.22em;
+        }
+
+        .rpl-training-name {
+            font-size: 1.45rem;
+        }
+
+        .rpl-training-tagline {
+            font-size: 0.56rem;
+            letter-spacing: 0.12em;
+        }
+
+        .st-key-header_sign_out button {
+            min-height: 2.6rem !important;
+            font-size: 0.72rem !important;
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
         }
 
         .st-key-rpl_nav div[data-testid="stHorizontalBlock"] {
-            flex-wrap: nowrap !important;
-            gap: 0.35rem !important;
+            flex-wrap: wrap !important;
+            gap: 0.45rem !important;
         }
 
         .st-key-rpl_nav div[data-testid="column"] {
-            min-width: 0 !important;
-            width: 25% !important;
-            flex: 1 1 25% !important;
+            min-width: calc(50% - 0.25rem) !important;
+            width: calc(50% - 0.25rem) !important;
+            flex: 1 1 calc(50% - 0.25rem) !important;
         }
 
         .st-key-navcard_log,
         .st-key-navcard_progress,
         .st-key-navcard_history,
         .st-key-navcard_bodyweight {
-            min-height: 94px;
-            padding: 0.4rem 0.2rem 0.35rem 0.2rem !important;
-            border-radius: 10px !important;
+            min-height: 108px;
+            padding: 0.5rem 0.4rem 0.45rem 0.4rem !important;
+            border-radius: 11px !important;
         }
 
         .rpl-nav-icon-wrap {
-            height: 34px;
-            margin-bottom: 0.1rem;
+            height: 38px;
         }
 
         .rpl-nav-icon-wrap img {
-            width: 28px;
-            height: 28px;
+            width: 31px;
+            height: 31px;
         }
 
         .st-key-nav_log button,
         .st-key-nav_progress button,
         .st-key-nav_history button,
         .st-key-nav_bodyweight button {
-            font-size: 0.68rem !important;
+            font-size: 0.78rem !important;
             line-height: 1.05 !important;
-            white-space: normal !important;
-            min-height: 2rem !important;
-        }
-
-        .st-key-header_sign_out button {
-            min-height: 2.4rem !important;
-            font-size: 0.76rem !important;
         }
     }
     </style>
-    """.replace(
-        "__ACTIVE_CSS__",
-        st.session_state.get("_nav_active_css", "")
-    ),
+    """.replace("__TRAINING_BG__", training_bg_uri),
     unsafe_allow_html=True,
 )
 
@@ -243,86 +390,115 @@ active_css_map = {
     "log": """
         .st-key-navcard_log {
             border: 1px solid #ff3932 !important;
-            background: linear-gradient(180deg, #1c1718 0%, #131519 100%) !important;
-            box-shadow: inset 0 -3px 0 #ff2a23, 0 0 18px rgba(255,42,35,0.10);
+            background:
+                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
+                #181215 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
         }
-        .st-key-nav_log button { color: #ff4a45 !important; }
+        .st-key-nav_log button { color: #ff4640 !important; }
     """,
     "progress": """
         .st-key-navcard_progress {
             border: 1px solid #ff3932 !important;
-            background: linear-gradient(180deg, #1c1718 0%, #131519 100%) !important;
-            box-shadow: inset 0 -3px 0 #ff2a23, 0 0 18px rgba(255,42,35,0.10);
+            background:
+                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
+                #181215 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
         }
-        .st-key-nav_progress button { color: #ff4a45 !important; }
+        .st-key-nav_progress button { color: #ff4640 !important; }
     """,
     "history": """
         .st-key-navcard_history {
             border: 1px solid #ff3932 !important;
-            background: linear-gradient(180deg, #1c1718 0%, #131519 100%) !important;
-            box-shadow: inset 0 -3px 0 #ff2a23, 0 0 18px rgba(255,42,35,0.10);
+            background:
+                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
+                #181215 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
         }
-        .st-key-nav_history button { color: #ff4a45 !important; }
+        .st-key-nav_history button { color: #ff4640 !important; }
     """,
     "bodyweight": """
         .st-key-navcard_bodyweight {
             border: 1px solid #ff3932 !important;
-            background: linear-gradient(180deg, #1c1718 0%, #131519 100%) !important;
-            box-shadow: inset 0 -3px 0 #ff2a23, 0 0 18px rgba(255,42,35,0.10);
+            background:
+                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
+                #181215 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
         }
-        .st-key-nav_bodyweight button { color: #ff4a45 !important; }
+        .st-key-nav_bodyweight button { color: #ff4640 !important; }
     """,
 }
-st.session_state["_nav_active_css"] = active_css_map[active]
 
-# Re-inject active state immediately on this run.
 st.markdown(f"<style>{active_css_map[active]}</style>", unsafe_allow_html=True)
 
-with st.container(key="rpl_header"):
-    header_left, header_right = st.columns([6, 1], vertical_alignment="center")
+# Dynamic top shell
+st.markdown(
+    f"""
+    <div class="rpl-top-shell">
+        <div class="rpl-logo-panel">
+            <img src="{logo_uri}" alt="Razvan Performance Lab">
+        </div>
 
-    with header_left:
-        logo_path = Path("Assets/login_logo.png")
-        if logo_path.exists():
-            logo_b64 = base64.b64encode(logo_path.read_bytes()).decode()
-            st.markdown(
-                f"""
-                <div class="rpl-inside-header">
-                    <div>
-                        <img class="rpl-inside-logo"
-                             src="data:image/png;base64,{logo_b64}"
-                             alt="Razvan Performance Lab">
-                        <div class="rpl-userline">
-                            Training as <strong>{display_name}</strong>
-                        </div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-        else:
-            st.title("Razvan Performance Lab")
-            st.caption(f"Training as {display_name}")
+        <div class="rpl-training-panel">
+            <div class="rpl-training-copy">
+                <div class="rpl-training-kicker">Training as</div>
+                <div class="rpl-training-name">{display_name}</div>
+                <div class="rpl-training-tagline">Train · Track · Progress</div>
+            </div>
+        </div>
 
-    with header_right:
-        if st.button(
-            "⏻ SIGN OUT",
-            key="header_sign_out",
-            type="primary",
-            use_container_width=True,
-        ):
-            sign_out()
-            st.rerun()
+        <div class="rpl-signout-panel"></div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Place the functional Streamlit sign-out button visually over the third panel.
+st.markdown(
+    """
+    <style>
+    .st-key-header_sign_out {
+        margin-top: -8.05rem;
+        margin-left: auto;
+        width: calc((100% - 1.8rem) * 0.16);
+        min-width: 165px;
+        position: relative;
+        z-index: 5;
+        margin-right: 0.9rem;
+        margin-bottom: 4.7rem;
+    }
+
+    @media (max-width: 768px) {
+        .st-key-header_sign_out {
+            margin-top: -11.5rem;
+            width: 96px;
+            min-width: 96px;
+            margin-right: 0.45rem;
+            margin-bottom: 7.2rem;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+if st.button(
+    "⏻ SIGN OUT",
+    key="header_sign_out",
+    type="primary",
+    use_container_width=True,
+):
+    sign_out()
+    st.rerun()
 
 
-def icon_html(path: str) -> str:
-    p = Path(path)
-    if not p.exists():
+def icon_html(path: Path) -> str:
+    uri = _data_uri(path)
+    if not uri:
         return ""
-    data = base64.b64encode(p.read_bytes()).decode()
     return (
         '<div class="rpl-nav-icon-wrap">'
-        f'<img src="data:image/png;base64,{data}">'
+        f'<img src="{uri}">'
         '</div>'
     )
 
@@ -331,17 +507,16 @@ with st.container(key="rpl_nav"):
     cols = st.columns(4)
 
     nav_items = [
-        ("log", "Log Workout", "Assets/icon_workout.png", "navcard_log", "nav_log"),
-        ("progress", "Progress", "Assets/icon_progress.png", "navcard_progress", "nav_progress"),
-        ("history", "History", "Assets/icon_history.png", "navcard_history", "nav_history"),
-        ("bodyweight", "Body Weight", "Assets/icon_body.png", "navcard_bodyweight", "nav_bodyweight"),
+        ("log", "Log Workout", ICON_WORKOUT, "navcard_log", "nav_log"),
+        ("progress", "Progress", ICON_PROGRESS, "navcard_progress", "nav_progress"),
+        ("history", "History", ICON_HISTORY, "navcard_history", "nav_history"),
+        ("bodyweight", "Body Weight", ICON_BODY, "navcard_bodyweight", "nav_bodyweight"),
     ]
 
     for col, (section, label, icon, card_key, button_key) in zip(cols, nav_items):
         with col:
             with st.container(key=card_key):
                 st.markdown(icon_html(icon), unsafe_allow_html=True)
-
                 if st.button(
                     label,
                     key=button_key,
@@ -350,7 +525,7 @@ with st.container(key="rpl_nav"):
                     st.session_state["active_section"] = section
                     st.rerun()
 
-st.markdown("<div style='height:0.4rem'></div>", unsafe_allow_html=True)
+st.markdown("<div style='height:0.35rem'></div>", unsafe_allow_html=True)
 
 if active == "log":
     render_log_workout()

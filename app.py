@@ -1,9 +1,11 @@
 import streamlit as st
 
+from Components.auth_ui import render_auth_screen
+from Pages.body_tracking import render as render_body_tracking
 from Pages.log_workout import render as render_log_workout
 from Pages.progress import render as render_progress
 from Pages.workout_history import render as render_workout_history
-from Pages.body_tracking import render as render_body_tracking
+from Services.auth import get_profile, is_authenticated, sign_out
 
 st.set_page_config(
     page_title="Razvan Performance Lab",
@@ -15,7 +17,6 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Hide sidebar completely */
     section[data-testid="stSidebar"] {
         display: none !important;
     }
@@ -24,7 +25,6 @@ st.markdown(
         display: none !important;
     }
 
-    /* Desktop container */
     .block-container {
         max-width: 1500px;
         padding-top: 1rem;
@@ -33,12 +33,6 @@ st.markdown(
         padding-right: 2rem;
     }
 
-    /* Main title spacing */
-    h1 {
-        margin-bottom: 0.15rem;
-    }
-
-    /* Tabs */
     div[data-baseweb="tab-list"] {
         gap: 0.35rem;
         overflow-x: auto;
@@ -54,13 +48,11 @@ st.markdown(
         padding-right: 1rem;
     }
 
-    /* Make editor/dataframes scroll horizontally on small screens */
     [data-testid="stDataFrame"],
     [data-testid="stDataEditor"] {
         overflow-x: auto;
     }
 
-    /* Mobile */
     @media (max-width: 768px) {
         .block-container {
             padding-top: 0.7rem;
@@ -112,8 +104,32 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("🏋️ Razvan Performance Lab")
-st.caption("Training progression, workout history and bodyweight tracking.")
+if not is_authenticated():
+    render_auth_screen()
+    st.stop()
+
+profile = get_profile()
+display_name = (
+    profile.get("display_name")
+    if profile and profile.get("display_name")
+    else "Athlete"
+)
+avatar = (
+    profile.get("avatar_emoji")
+    if profile and profile.get("avatar_emoji")
+    else "🏋️"
+)
+
+header_left, header_right = st.columns([5, 1])
+
+with header_left:
+    st.title("🏋️ Razvan Performance Lab")
+    st.caption(f"{avatar} Training as **{display_name}**")
+
+with header_right:
+    if st.button("Sign out", use_container_width=True):
+        sign_out()
+        st.rerun()
 
 tab_log, tab_progress, tab_history, tab_body = st.tabs(
     [

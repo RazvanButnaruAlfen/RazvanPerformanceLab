@@ -1,23 +1,137 @@
 import streamlit as st
 
+from Pages.log_workout import render as render_log_workout
+from Pages.progress import render as render_progress
+from Pages.workout_history import render as render_workout_history
+from Pages.body_tracking import render as render_body_tracking
+
 st.set_page_config(
     page_title="Razvan Performance Lab",
     page_icon="🏋️",
     layout="wide",
+    initial_sidebar_state="collapsed",
 )
 
-pages = {
-    "Training": [
-        st.Page("Pages/1_Log_Workout.py", title="Log Workout", icon="🏋️"),
-        st.Page("Pages/2_Progress.py", title="Progress", icon="📈"),
-        st.Page("Pages/3_Workout_History.py", title="Workout History", icon="🗂️"),
-    ],
-    "Body": [
-        st.Page("Pages/4_Body_Tracking.py", title="Body Tracking", icon="⚖️"),
-    ],
-}
+st.markdown(
+    """
+    <style>
+    /* Hide sidebar completely */
+    section[data-testid="stSidebar"] {
+        display: none !important;
+    }
 
-pg = st.navigation(pages)
+    [data-testid="collapsedControl"] {
+        display: none !important;
+    }
 
-st.logo("https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f3cb.png")
-pg.run()
+    /* Desktop container */
+    .block-container {
+        max-width: 1500px;
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    /* Main title spacing */
+    h1 {
+        margin-bottom: 0.15rem;
+    }
+
+    /* Tabs */
+    div[data-baseweb="tab-list"] {
+        gap: 0.35rem;
+        overflow-x: auto;
+        scrollbar-width: thin;
+        white-space: nowrap;
+    }
+
+    button[data-baseweb="tab"] {
+        flex-shrink: 0;
+        min-width: max-content;
+        font-size: 0.98rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Make editor/dataframes scroll horizontally on small screens */
+    [data-testid="stDataFrame"],
+    [data-testid="stDataEditor"] {
+        overflow-x: auto;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+        .block-container {
+            padding-top: 0.7rem;
+            padding-bottom: 1.5rem;
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        h1 {
+            font-size: 1.7rem !important;
+        }
+
+        h2 {
+            font-size: 1.35rem !important;
+        }
+
+        h3 {
+            font-size: 1.1rem !important;
+        }
+
+        button[data-baseweb="tab"] {
+            font-size: 0.88rem;
+            padding-left: 0.7rem;
+            padding-right: 0.7rem;
+        }
+
+        div[data-testid="stHorizontalBlock"] {
+            flex-wrap: wrap;
+        }
+
+        div[data-testid="column"] {
+            min-width: 100% !important;
+            width: 100% !important;
+            flex: 1 1 100% !important;
+        }
+
+        .stButton > button,
+        .stFormSubmitButton > button {
+            width: 100%;
+        }
+
+        input,
+        textarea {
+            font-size: 16px !important;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.title("🏋️ Razvan Performance Lab")
+st.caption("Training progression, workout history and bodyweight tracking.")
+
+tab_log, tab_progress, tab_history, tab_body = st.tabs(
+    [
+        "🏋️ Log Workout",
+        "📈 Progress",
+        "🗂️ History",
+        "⚖️ Body",
+    ]
+)
+
+with tab_log:
+    render_log_workout()
+
+with tab_progress:
+    render_progress()
+
+with tab_history:
+    render_workout_history()
+
+with tab_body:
+    render_body_tracking()

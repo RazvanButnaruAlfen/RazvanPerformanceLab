@@ -1,1 +1,74 @@
-
+[
+  {
+    "name": "Barbell Bench Press",
+    "category": "Chest"
+  },
+  {
+    "name": "Incline Dumbbell Press",
+    "category": "Chest"
+  },
+  {
+    "name": "Weighted Dips",
+    "category": "Chest / Triceps"
+  },
+  {
+    "name": "Cable Triceps Extension",
+    "category": "Triceps"
+  },
+  {
+    "name": "Standing Barbell Shoulder Press",
+    "category": "Shoulders"
+  },
+  {
+    "name": "Cable Lateral Raise",
+    "category": "Shoulders"
+  },
+  {
+    "name": "Pull-Up",
+    "category": "Back"
+  },
+  {
+    "name": "Lat Pulldown",
+    "category": "Back"
+  },
+  {
+    "name": "Barbell Row",
+    "category": "Back"
+  },
+  {
+    "name": "Seated Cable Row",
+    "category": "Back"
+  },
+  {
+    "name": "Barbell Curl",
+    "category": "Biceps"
+  },
+  {
+    "name": "Dumbbell Curl",
+    "category": "Biceps"
+  },
+  {
+    "name": "Back Squat",
+    "category": "Legs"
+  },
+  {
+    "name": "Romanian Deadlift",
+    "category": "Legs"
+  },
+  {
+    "name": "Leg Press",
+    "category": "Legs"
+  },
+  {
+    "name": "Leg Extension",
+    "category": "Legs"
+  },
+  {
+    "name": "Leg Curl",
+    "category": "Legs"
+  },
+  {
+    "name": "Standing Calf Raise",
+    "category": "Calves"
+  }
+]

@@ -69,26 +69,35 @@ st.markdown(
         padding-right: 1.1rem;
     }
 
-    .rpl-logo-card,
+    .st-key-desktop_logo_card {
+        min-height: 150px;
+        border: 1px solid #2c3138;
+        border-radius: 14px;
+        background: #101318;
+        padding: 0.9rem 1.15rem !important;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .st-key-desktop_logo_card [data-testid="stImage"] {
+        width: 100%;
+        margin: 0 !important;
+    }
+
+    .st-key-desktop_logo_card [data-testid="stImage"] img {
+        width: 100% !important;
+        max-width: 560px !important;
+        height: auto !important;
+        display: block !important;
+    }
+
     .rpl-training-card {
         min-height: 150px;
         border: 1px solid #2c3138;
         border-radius: 14px;
         background: #101318;
         overflow: hidden;
-    }
-
-    .rpl-logo-card {
-        display: flex;
-        align-items: center;
-        padding: 0.9rem 1.15rem;
-    }
-
-    .rpl-logo-card img {
-        width: 100%;
-        max-width: 560px;
-        height: auto;
-        display: block;
     }
 
     .rpl-training-card {
@@ -247,6 +256,22 @@ st.markdown(
         min-height: 1.85rem !important;
         padding: 0.1rem !important;
     }
+
+
+    .st-key-desktop_logo_card,
+    .st-key-desktop_logo_card *,
+    .rpl-training-card,
+    .rpl-training-card * {
+        caret-color: transparent !important;
+        user-select: none !important;
+    }
+
+    .st-key-desktop_logo_card *:focus,
+    .rpl-training-card *:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
 
     @media (max-width: 768px) {
 
@@ -417,14 +442,8 @@ def render_desktop_header():
     )
 
     with logo_col:
-        st.markdown(
-            f"""
-            <div class="rpl-logo-card">
-                <img src="{logo_uri}">
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        with st.container(key="desktop_logo_card"):
+            st.image(str(APP_LOGO), use_container_width=True)
 
     with training_col:
         st.markdown(

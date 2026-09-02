@@ -248,6 +248,72 @@ st.markdown(
        MOBILE
        ========================= */
     @media (max-width: 768px) {
+
+        /* Mobile header: intentionally different from desktop */
+        .st-key-rpl_top_header div[data-testid="stHorizontalBlock"] {
+            display: grid !important;
+            grid-template-columns: 1fr auto !important;
+            grid-template-areas:
+                "brand signout"
+                "training training" !important;
+            gap: 0.5rem !important;
+            align-items: center !important;
+        }
+
+        .st-key-rpl_top_header div[data-testid="column"]:nth-child(1) {
+            grid-area: brand !important;
+            min-width: 0 !important;
+            width: 100% !important;
+        }
+
+        .st-key-rpl_top_header div[data-testid="column"]:nth-child(2) {
+            grid-area: training !important;
+            min-width: 0 !important;
+            width: 100% !important;
+        }
+
+        .st-key-rpl_top_header div[data-testid="column"]:nth-child(3) {
+            grid-area: signout !important;
+            min-width: 100px !important;
+            width: 100px !important;
+        }
+
+        .rpl-logo-panel {
+            min-height: 74px !important;
+            padding: 0.45rem 0.55rem !important;
+        }
+
+        .rpl-logo-panel img {
+            max-width: 245px !important;
+        }
+
+        .rpl-training-panel {
+            min-height: 92px !important;
+        }
+
+        .rpl-training-copy {
+            right: 0.7rem !important;
+            width: 58% !important;
+        }
+
+        .rpl-training-name {
+            font-size: 1.25rem !important;
+        }
+
+        .rpl-training-tagline {
+            font-size: 0.52rem !important;
+        }
+
+        .st-key-header_sign_out {
+            min-height: auto !important;
+        }
+
+        .st-key-header_sign_out button {
+            min-height: 2.35rem !important;
+            font-size: 0.68rem !important;
+            padding: 0.35rem !important;
+        }
+
         .block-container {
             padding-top: 0.35rem;
             padding-bottom: 1rem;
@@ -310,41 +376,48 @@ st.markdown(
             padding-right: 0.5rem !important;
         }
 
+        /* Mobile navigation: explicit 2 x 2 grid instead of vertical stacking */
         .st-key-rpl_nav div[data-testid="stHorizontalBlock"] {
-            flex-wrap: wrap !important;
-            gap: 0.45rem !important;
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 0.55rem !important;
+            width: 100% !important;
         }
 
         .st-key-rpl_nav div[data-testid="column"] {
-            min-width: calc(50% - 0.25rem) !important;
-            width: calc(50% - 0.25rem) !important;
-            flex: 1 1 calc(50% - 0.25rem) !important;
+            min-width: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+            flex: none !important;
         }
 
         .st-key-navcard_log,
         .st-key-navcard_progress,
         .st-key-navcard_history,
         .st-key-navcard_bodyweight {
-            min-height: 126px;
-            padding: 0.5rem 0.4rem 0.45rem 0.4rem !important;
+            min-height: 118px !important;
+            padding: 0.45rem 0.3rem 0.4rem 0.3rem !important;
             border-radius: 11px !important;
         }
 
         .rpl-nav-icon-wrap {
-            height: 58px;
+            height: 48px !important;
+            margin-bottom: 0.05rem !important;
         }
 
         .rpl-nav-icon-wrap img {
-            width: 50px;
-            height: 50px;
+            width: 42px !important;
+            height: 42px !important;
         }
 
         .st-key-nav_log button,
         .st-key-nav_progress button,
         .st-key-nav_history button,
         .st-key-nav_bodyweight button {
-            font-size: 0.78rem !important;
+            font-size: 0.80rem !important;
             line-height: 1.05 !important;
+            min-height: 1.9rem !important;
+            padding: 0.1rem !important;
         }
     }
     </style>

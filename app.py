@@ -273,41 +273,87 @@ st.markdown(
     }
 
 
-
-    /* Prevent browser/Streamlit text-caret artifacts in non-editable UI.
-       Keep the caret only inside real form fields. */
-    body,
-    body *:not(input):not(textarea):not([contenteditable="true"]) {
-        caret-color: transparent !important;
-    }
-
-    input,
-    textarea,
-    [contenteditable="true"] {
-        caret-color: auto !important;
-    }
-
-    /* Remove focus rings/caret-like outlines from decorative containers/cards.
-       Real form inputs keep their native focus behaviour. */
-    [data-testid="stVerticalBlockBorderWrapper"]:focus,
-    [data-testid="stVerticalBlockBorderWrapper"]:focus-visible,
-    [data-testid="stHorizontalBlock"]:focus,
-    [data-testid="stHorizontalBlock"]:focus-visible,
-    [data-testid="stImage"]:focus,
-    [data-testid="stImage"]:focus-visible,
-    .st-key-navcard_log:focus,
-    .st-key-navcard_progress:focus,
-    .st-key-navcard_history:focus,
-    .st-key-navcard_bodyweight:focus,
-    .st-key-mobile_navcard_log:focus,
-    .st-key-mobile_navcard_progress:focus,
-    .st-key-mobile_navcard_history:focus,
-    .st-key-mobile_navcard_bodyweight:focus {
-        outline: none !important;
-        box-shadow: none !important;
-    }
-
     @media (max-width: 768px) {
+
+        /* Prevent any desktop-sized child from widening the mobile page */
+        html, body, [data-testid="stAppViewContainer"], .stApp, .main, .block-container {
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
+        }
+
+        /* Mobile header should never exceed viewport */
+        .rpl-mobile-logo,
+        .rpl-mobile-training,
+        .st-key-mobile_signout_wrap {
+            max-width: 100% !important;
+            overflow: hidden !important;
+        }
+
+        /* True compact 2x2 mobile navigation */
+        .st-key-mobile_nav_row_1,
+        .st-key-mobile_nav_row_2 {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+        }
+
+        .st-key-mobile_nav_row_1 div[data-testid="stHorizontalBlock"],
+        .st-key-mobile_nav_row_2 div[data-testid="stHorizontalBlock"] {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+            gap: 0.45rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+        }
+
+        .st-key-mobile_nav_row_1 div[data-testid="column"],
+        .st-key-mobile_nav_row_2 div[data-testid="column"] {
+            min-width: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: none !important;
+        }
+
+        .st-key-mobile_navcard_log,
+        .st-key-mobile_navcard_progress,
+        .st-key-mobile_navcard_history,
+        .st-key-mobile_navcard_bodyweight {
+            min-width: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-height: 88px !important;
+            padding: 0.28rem 0.18rem 0.30rem 0.18rem !important;
+            border-radius: 9px !important;
+            overflow: hidden !important;
+        }
+
+        .rpl-mobile-nav-icon {
+            width: 30px !important;
+            height: 30px !important;
+            margin: 0 auto 0 !important;
+        }
+
+        .st-key-mobile_nav_log button,
+        .st-key-mobile_nav_progress button,
+        .st-key-mobile_nav_history button,
+        .st-key-mobile_nav_bodyweight button {
+            font-size: 0.67rem !important;
+            line-height: 1 !important;
+            min-height: 1.55rem !important;
+            padding: 0.05rem !important;
+            white-space: normal !important;
+        }
+
+        /* Selected mobile card keeps the same look, just scaled down */
+        .st-key-mobile_navcard_log::after,
+        .st-key-mobile_navcard_progress::after,
+        .st-key-mobile_navcard_history::after,
+        .st-key-mobile_navcard_bodyweight::after {
+            bottom: 0.28rem !important;
+            height: 3px !important;
+        }
+
 
         /* Mobile header */
         .rpl-mobile-logo {
@@ -317,7 +363,7 @@ st.markdown(
         }
 
         .rpl-mobile-logo img {
-            width: min(88vw, 360px) !important;
+            width: min(82vw, 320px) !important;
             max-width: 360px !important;
         }
 

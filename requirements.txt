@@ -2,3 +2,4 @@ streamlit>=1.36,<2
 pandas>=2.2,<3
 supabase>=2.6,<3
 Pillow>=10,<12
+streamlit-js-eval>=0.1.7

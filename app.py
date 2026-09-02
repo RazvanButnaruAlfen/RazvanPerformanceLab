@@ -9,6 +9,7 @@ from Pages.log_workout import render as render_log_workout
 from Pages.progress import render as render_progress
 from Pages.workout_history import render as render_workout_history
 from Services.auth import get_profile, is_authenticated, sign_out
+from Services.responsive import is_mobile
 
 APP_LOGO = Path("Assets/login_logo.png")
 HEADER_TRAINING_BG = Path("Assets/header_training_bg.png")
@@ -29,6 +30,13 @@ def _data_uri(path: Path) -> str:
     if not path.exists():
         return ""
     return "data:image/png;base64," + base64.b64encode(path.read_bytes()).decode()
+
+
+def _icon_html(path: Path, css_class: str = "rpl-nav-icon") -> str:
+    uri = _data_uri(path)
+    if not uri:
+        return ""
+    return f'<img class="{css_class}" src="{uri}">'
 
 
 logo_uri = _data_uri(APP_LOGO)
@@ -55,169 +63,107 @@ st.markdown(
 
     .block-container {
         max-width: 1580px;
-        padding-top: 0.55rem;
+        padding-top: 0.5rem;
         padding-bottom: 2rem;
-        padding-left: 1.2rem;
-        padding-right: 1.2rem;
+        padding-left: 1.1rem;
+        padding-right: 1.1rem;
     }
 
-    /* =========================
-       TOP BRAND HEADER
-       ========================= */
-    .st-key-rpl_top_header {
-        margin-bottom: 0.9rem;
-    }
-
-    .st-key-rpl_top_header div[data-testid="stHorizontalBlock"] {
-        align-items: stretch !important;
-    }
-
-    .rpl-logo-panel,
-    .rpl-training-panel {
-        background:
-            linear-gradient(180deg, rgba(18,20,24,0.98), rgba(8,10,13,0.98));
-        border: 1px solid #252a31;
+    .rpl-logo-card,
+    .rpl-training-card {
+        min-height: 150px;
+        border: 1px solid #2c3138;
         border-radius: 14px;
-        min-height: 154px;
+        background: #101318;
         overflow: hidden;
-        position: relative;
     }
 
-    .rpl-logo-panel {
+    .rpl-logo-card {
         display: flex;
         align-items: center;
-        padding: 0.9rem 1.2rem;
+        padding: 0.9rem 1.15rem;
     }
 
-    .rpl-logo-panel img {
+    .rpl-logo-card img {
         width: 100%;
         max-width: 560px;
         height: auto;
         display: block;
     }
 
-    .rpl-training-panel {
+    .rpl-training-card {
+        position: relative;
         background-image:
-            linear-gradient(90deg, rgba(8,10,13,0.12) 0%, rgba(8,10,13,0.70) 44%, rgba(8,10,13,0.98) 78%),
+            linear-gradient(90deg, rgba(7,9,12,0.10), rgba(7,9,12,0.62) 45%, rgba(7,9,12,0.97) 78%),
             url("__TRAINING_BG__");
-        background-size: 118% auto;
-        background-position: 42% center;
+        background-size: cover;
+        background-position: center;
     }
 
     .rpl-training-copy {
         position: absolute;
-        right: 1.25rem;
+        right: 1.1rem;
         top: 50%;
+        width: 56%;
         transform: translateY(-50%);
-        width: 55%;
-        text-align: left;
     }
 
-    .rpl-training-kicker {
-        color: #d8dadd;
-        font-size: 0.74rem;
+    .rpl-kicker {
+        font-size: 0.72rem;
+        letter-spacing: 0.26em;
         font-weight: 700;
-        letter-spacing: 0.28em;
+        color: #d7d9dd;
         text-transform: uppercase;
-        margin-bottom: 0.18rem;
     }
 
-    .rpl-training-name {
-        color: #ffffff;
+    .rpl-name {
+        margin-top: 0.15rem;
         font-size: 2rem;
         font-weight: 800;
-        letter-spacing: 0.04em;
         line-height: 1;
+        color: white;
         text-transform: uppercase;
         padding-bottom: 0.42rem;
-        border-bottom: 1px solid #bd1b18;
-        text-shadow: 0 0 16px rgba(255,255,255,0.08);
+        border-bottom: 1px solid #ba1d19;
     }
 
-    .rpl-training-tagline {
-        color: #aeb2b9;
-        font-size: 0.72rem;
-        letter-spacing: 0.20em;
+    .rpl-tagline {
         margin-top: 0.5rem;
+        color: #b2b5bb;
+        font-size: 0.70rem;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
-    }
-
-    .st-key-header_sign_out {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        min-height: 154px;
-    }
-
-    .st-key-header_sign_out > div {
-        width: 100%;
     }
 
     .st-key-header_sign_out button {
-        width: 100% !important;
-        min-height: 3.55rem !important;
-        background: linear-gradient(90deg, #c60b0b 0%, #ff2b23 100%) !important;
-        border: 1px solid #ff463f !important;
-        color: #fff !important;
+        min-height: 3.4rem !important;
+        background: linear-gradient(90deg, #c90b0b, #ff2b23) !important;
+        border: 1px solid #ff4540 !important;
+        color: white !important;
         font-weight: 800 !important;
-        letter-spacing: 0.045em !important;
+        letter-spacing: 0.04em !important;
         border-radius: 10px !important;
-        box-shadow: 0 0 28px rgba(255, 42, 35, 0.20);
+        box-shadow: 0 0 26px rgba(255,42,35,0.18);
     }
 
-    .st-key-header_sign_out button:hover {
-        filter: brightness(1.08);
-        border-color: #ff716c !important;
-    }
-
-    /* =========================
-       NAVIGATION CARDS
-       ========================= */
-    .rpl-nav-section {
-        margin-top: 0.2rem;
-        margin-bottom: 1.25rem;
-    }
-
-    .rpl-nav-icon-wrap {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 78px;
-        margin-bottom: 0.15rem;
-    }
-
-    .rpl-nav-icon-wrap img {
-        width: 68px;
-        height: 68px;
+    .rpl-nav-icon {
+        width: 64px;
+        height: 64px;
         object-fit: contain;
         display: block;
+        margin: 0 auto 0.15rem auto;
     }
 
     .st-key-navcard_log,
     .st-key-navcard_progress,
     .st-key-navcard_history,
     .st-key-navcard_bodyweight {
+        min-height: 150px;
         border: 1px solid #343940 !important;
-        background:
-            linear-gradient(135deg, rgba(255,255,255,0.025), rgba(255,255,255,0.0) 45%),
-            #111419 !important;
         border-radius: 14px !important;
-        padding: 0.75rem 0.75rem 0.55rem 0.75rem !important;
-        min-height: 158px;
-        transition: 0.16s ease;
+        background: #111419 !important;
+        padding: 0.75rem 0.7rem 0.6rem 0.7rem !important;
         position: relative;
-        overflow: hidden;
-    }
-
-    .st-key-navcard_log:hover,
-    .st-key-navcard_progress:hover,
-    .st-key-navcard_history:hover,
-    .st-key-navcard_bodyweight:hover {
-        transform: translateY(-2px);
-        border-color: #60666f !important;
-        background:
-            linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.0) 45%),
-            #15191f !important;
     }
 
     .st-key-nav_log button,
@@ -226,198 +172,101 @@ st.markdown(
     .st-key-nav_bodyweight button {
         background: transparent !important;
         border: 0 !important;
-        color: #f2f3f5 !important;
-        font-weight: 750 !important;
-        min-height: 2.2rem !important;
-        width: 100% !important;
         box-shadow: none !important;
-        text-align: center !important;
+        color: #f3f4f6 !important;
+        font-weight: 750 !important;
+        width: 100% !important;
         justify-content: center !important;
-        font-size: 0.98rem !important;
-        padding: 0.2rem !important;
+        text-align: center !important;
     }
 
-    __ACTIVE_CSS__
-
-    [data-testid="stDataFrame"],
-    [data-testid="stDataEditor"] {
-        overflow-x: auto;
+    .rpl-mobile-logo img {
+        max-width: 270px;
+        width: 100%;
+        height: auto;
+        display: block;
     }
 
-    /* =========================
-       MOBILE
-       ========================= */
+    .rpl-mobile-training {
+        border: 1px solid #2e333a;
+        border-radius: 10px;
+        padding: 0.55rem 0.7rem;
+        background: linear-gradient(90deg, #111419, #171217);
+    }
+
+    .rpl-mobile-training .rpl-kicker {
+        font-size: 0.58rem;
+    }
+
+    .rpl-mobile-training .rpl-name {
+        font-size: 1.15rem;
+        border: 0;
+        padding: 0;
+        margin-top: 0.1rem;
+    }
+
+    .rpl-mobile-training .rpl-tagline {
+        font-size: 0.52rem;
+        margin-top: 0.2rem;
+        letter-spacing: 0.10em;
+    }
+
+    .rpl-mobile-nav-icon {
+        width: 42px;
+        height: 42px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 0.05rem auto;
+    }
+
+    .st-key-mobile_navcard_log,
+    .st-key-mobile_navcard_progress,
+    .st-key-mobile_navcard_history,
+    .st-key-mobile_navcard_bodyweight {
+        min-height: 108px;
+        border: 1px solid #333840 !important;
+        border-radius: 11px !important;
+        background: #111419 !important;
+        padding: 0.45rem 0.35rem 0.4rem 0.35rem !important;
+        position: relative;
+    }
+
+    .st-key-mobile_nav_log button,
+    .st-key-mobile_nav_progress button,
+    .st-key-mobile_nav_history button,
+    .st-key-mobile_nav_bodyweight button {
+        background: transparent !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        color: #f2f3f5 !important;
+        width: 100% !important;
+        justify-content: center !important;
+        text-align: center !important;
+        font-size: 0.78rem !important;
+        font-weight: 700 !important;
+        min-height: 1.85rem !important;
+        padding: 0.1rem !important;
+    }
+
     @media (max-width: 768px) {
-
-        /* Mobile header: intentionally different from desktop */
-        .st-key-rpl_top_header div[data-testid="stHorizontalBlock"] {
-            display: grid !important;
-            grid-template-columns: 1fr auto !important;
-            grid-template-areas:
-                "brand signout"
-                "training training" !important;
-            gap: 0.5rem !important;
-            align-items: center !important;
-        }
-
-        .st-key-rpl_top_header div[data-testid="column"]:nth-child(1) {
-            grid-area: brand !important;
-            min-width: 0 !important;
-            width: 100% !important;
-        }
-
-        .st-key-rpl_top_header div[data-testid="column"]:nth-child(2) {
-            grid-area: training !important;
-            min-width: 0 !important;
-            width: 100% !important;
-        }
-
-        .st-key-rpl_top_header div[data-testid="column"]:nth-child(3) {
-            grid-area: signout !important;
-            min-width: 100px !important;
-            width: 100px !important;
-        }
-
-        .rpl-logo-panel {
-            min-height: 74px !important;
-            padding: 0.45rem 0.55rem !important;
-        }
-
-        .rpl-logo-panel img {
-            max-width: 245px !important;
-        }
-
-        .rpl-training-panel {
-            min-height: 92px !important;
-        }
-
-        .rpl-training-copy {
-            right: 0.7rem !important;
-            width: 58% !important;
-        }
-
-        .rpl-training-name {
-            font-size: 1.25rem !important;
-        }
-
-        .rpl-training-tagline {
-            font-size: 0.52rem !important;
-        }
-
-        .st-key-header_sign_out {
-            min-height: auto !important;
-        }
-
-        .st-key-header_sign_out button {
-            min-height: 2.35rem !important;
-            font-size: 0.68rem !important;
-            padding: 0.35rem !important;
-        }
-
         .block-container {
-            padding-top: 0.35rem;
+            padding-top: 0.3rem;
+            padding-left: 0.55rem;
+            padding-right: 0.55rem;
             padding-bottom: 1rem;
-            padding-left: 0.6rem;
-            padding-right: 0.6rem;
         }
 
-        .st-key-rpl_top_header div[data-testid="stHorizontalBlock"] {
-            flex-wrap: wrap !important;
-            gap: 0.5rem !important;
+        h1 {
+            font-size: 1.8rem !important;
         }
 
-        .st-key-rpl_top_header div[data-testid="column"] {
-            min-width: 100% !important;
-            width: 100% !important;
-            flex: 1 1 100% !important;
+        h2 {
+            font-size: 1.35rem !important;
         }
 
-        .rpl-logo-panel {
-            min-height: 82px;
-            padding: 0.55rem 0.7rem;
-        }
-
-        .rpl-logo-panel img {
-            max-width: 300px;
-        }
-
-        .rpl-training-panel {
-            min-height: 112px;
-            background-position: 42% center;
-        }
-
-        .rpl-training-copy {
-            right: 0.8rem;
-            width: 60%;
-        }
-
-        .rpl-training-kicker {
-            font-size: 0.62rem;
-            letter-spacing: 0.22em;
-        }
-
-        .rpl-training-name {
-            font-size: 1.45rem;
-        }
-
-        .rpl-training-tagline {
-            font-size: 0.56rem;
-            letter-spacing: 0.12em;
-        }
-
-        .st-key-header_sign_out {
-            min-height: auto;
-        }
-
-        .st-key-header_sign_out button {
-            min-height: 2.6rem !important;
-            font-size: 0.72rem !important;
-            padding-left: 0.5rem !important;
-            padding-right: 0.5rem !important;
-        }
-
-        /* Mobile navigation: explicit 2 x 2 grid instead of vertical stacking */
-        .st-key-rpl_nav div[data-testid="stHorizontalBlock"] {
-            display: grid !important;
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 0.55rem !important;
-            width: 100% !important;
-        }
-
-        .st-key-rpl_nav div[data-testid="column"] {
-            min-width: 0 !important;
-            width: 100% !important;
-            max-width: none !important;
-            flex: none !important;
-        }
-
-        .st-key-navcard_log,
-        .st-key-navcard_progress,
-        .st-key-navcard_history,
-        .st-key-navcard_bodyweight {
-            min-height: 118px !important;
-            padding: 0.45rem 0.3rem 0.4rem 0.3rem !important;
-            border-radius: 11px !important;
-        }
-
-        .rpl-nav-icon-wrap {
-            height: 48px !important;
-            margin-bottom: 0.05rem !important;
-        }
-
-        .rpl-nav-icon-wrap img {
-            width: 42px !important;
-            height: 42px !important;
-        }
-
-        .st-key-nav_log button,
-        .st-key-nav_progress button,
-        .st-key-nav_history button,
-        .st-key-nav_bodyweight button {
-            font-size: 0.80rem !important;
-            line-height: 1.05 !important;
-            min-height: 1.9rem !important;
-            padding: 0.1rem !important;
+        input,
+        textarea {
+            font-size: 16px !important;
         }
     }
     </style>
@@ -428,6 +277,9 @@ st.markdown(
 if not is_authenticated():
     render_auth_screen()
     st.stop()
+
+mobile = is_mobile()
+st.session_state["is_mobile"] = mobile
 
 profile = get_profile()
 display_name = (
@@ -441,136 +293,78 @@ if "active_section" not in st.session_state:
 
 active = st.session_state["active_section"]
 
-active_css_map = {
-    "log": """
-        .st-key-navcard_log {
-            border: 1px solid #ff3932 !important;
-            background:
-                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
-                #181215 !important;
-            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
-        }
-        
-        .st-key-navcard_log::after {
-            content: "";
-            position: absolute;
-            left: 42%;
-            right: 42%;
-            bottom: 0.55rem;
-            height: 4px;
-            border-radius: 999px;
-            background: #ff2a23;
-            box-shadow: 0 0 10px rgba(255,42,35,0.45);
-        }
-        .st-key-nav_log button { color: #ff4640 !important; }
 
-    """,
-    "progress": """
-        .st-key-navcard_progress {
-            border: 1px solid #ff3932 !important;
-            background:
-                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
-                #181215 !important;
-            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
-        }
-        
-        .st-key-navcard_progress::after {
-            content: "";
-            position: absolute;
-            left: 42%;
-            right: 42%;
-            bottom: 0.55rem;
-            height: 4px;
-            border-radius: 999px;
-            background: #ff2a23;
-            box-shadow: 0 0 10px rgba(255,42,35,0.45);
-        }
-        .st-key-nav_progress button { color: #ff4640 !important; }
+def active_card_css(prefix: str, section: str) -> str:
+    return f"""
+    .st-key-{prefix}_{section} {{
+        border-color: #ff3932 !important;
+        background:
+            radial-gradient(circle at 18% 20%, rgba(255,50,40,0.24), rgba(255,50,40,0.08) 32%, rgba(0,0,0,0) 70%),
+            #171216 !important;
+        box-shadow:
+            inset 0 -4px 0 #ff2a23,
+            inset 0 0 28px rgba(255,42,35,0.06),
+            0 0 24px rgba(255,42,35,0.15);
+    }}
 
-    """,
-    "history": """
-        .st-key-navcard_history {
-            border: 1px solid #ff3932 !important;
-            background:
-                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
-                #181215 !important;
-            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
-        }
-        
-        .st-key-navcard_history::after {
-            content: "";
-            position: absolute;
-            left: 42%;
-            right: 42%;
-            bottom: 0.55rem;
-            height: 4px;
-            border-radius: 999px;
-            background: #ff2a23;
-            box-shadow: 0 0 10px rgba(255,42,35,0.45);
-        }
-        .st-key-nav_history button { color: #ff4640 !important; }
+    .st-key-{prefix}_{section}::after {{
+        content: "";
+        position: absolute;
+        left: 42%;
+        right: 42%;
+        bottom: 0.45rem;
+        height: 4px;
+        border-radius: 999px;
+        background: #ff2a23;
+        box-shadow: 0 0 10px rgba(255,42,35,0.45);
+    }}
+    """
 
-    """,
-    "bodyweight": """
-        .st-key-navcard_bodyweight {
-            border: 1px solid #ff3932 !important;
-            background:
-                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
-                #181215 !important;
-            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
-        }
-        
-        .st-key-navcard_bodyweight::after {
-            content: "";
-            position: absolute;
-            left: 42%;
-            right: 42%;
-            bottom: 0.55rem;
-            height: 4px;
-            border-radius: 999px;
-            background: #ff2a23;
-            box-shadow: 0 0 10px rgba(255,42,35,0.45);
-        }
-        .st-key-nav_bodyweight button { color: #ff4640 !important; }
 
-    """,
-}
-
-st.markdown(f"<style>{active_css_map[active]}</style>", unsafe_allow_html=True)
-
-# Dynamic top header built with Streamlit columns so HTML never renders as code.
-with st.container(key="rpl_top_header"):
-    header_logo_col, header_training_col, header_signout_col = st.columns(
-        [1.2, 1.0, 0.42],
-        vertical_alignment="center",
-        gap="medium",
+if mobile:
+    st.markdown(
+        f"<style>{active_card_css('mobile_navcard', active)}</style>",
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown(
+        f"<style>{active_card_css('navcard', active)}</style>",
+        unsafe_allow_html=True,
     )
 
-    with header_logo_col:
+
+def render_desktop_header():
+    logo_col, training_col, signout_col = st.columns(
+        [1.18, 1.0, 0.38],
+        gap="medium",
+        vertical_alignment="center",
+    )
+
+    with logo_col:
         st.markdown(
             f"""
-<div class="rpl-logo-panel">
-    <img src="{logo_uri}" alt="Razvan Performance Lab">
-</div>
-""",
+            <div class="rpl-logo-card">
+                <img src="{logo_uri}">
+            </div>
+            """,
             unsafe_allow_html=True,
         )
 
-    with header_training_col:
+    with training_col:
         st.markdown(
             f"""
-<div class="rpl-training-panel">
-    <div class="rpl-training-copy">
-        <div class="rpl-training-kicker">Training as</div>
-        <div class="rpl-training-name">{display_name}</div>
-        <div class="rpl-training-tagline">Train · Track · Progress</div>
-    </div>
-</div>
-""",
+            <div class="rpl-training-card">
+                <div class="rpl-training-copy">
+                    <div class="rpl-kicker">Training as</div>
+                    <div class="rpl-name">{display_name}</div>
+                    <div class="rpl-tagline">Train · Track · Progress</div>
+                </div>
+            </div>
+            """,
             unsafe_allow_html=True,
         )
 
-    with header_signout_col:
+    with signout_col:
         if st.button(
             "⏻ SIGN OUT",
             key="header_sign_out",
@@ -581,41 +375,96 @@ with st.container(key="rpl_top_header"):
             st.rerun()
 
 
-def icon_html(path: Path) -> str:
+def render_mobile_header():
+    brand_col, signout_col = st.columns(
+        [1, 0.42],
+        gap="small",
+        vertical_alignment="center",
+    )
 
-    uri = _data_uri(path)
-    if not uri:
-        return ""
-    return (
-        '<div class="rpl-nav-icon-wrap">'
-        f'<img src="{uri}">'
-        '</div>'
+    with brand_col:
+        st.markdown(
+            f'<div class="rpl-mobile-logo"><img src="{logo_uri}"></div>',
+            unsafe_allow_html=True,
+        )
+
+    with signout_col:
+        if st.button(
+            "⏻ OUT",
+            key="header_sign_out",
+            type="primary",
+            use_container_width=True,
+        ):
+            sign_out()
+            st.rerun()
+
+    st.markdown(
+        f"""
+        <div class="rpl-mobile-training">
+            <div class="rpl-kicker">Training as</div>
+            <div class="rpl-name">{display_name}</div>
+            <div class="rpl-tagline">Train · Track · Progress</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 
-with st.container(key="rpl_nav"):
-    cols = st.columns(4)
+def render_desktop_navigation():
+    cols = st.columns(4, gap="medium")
 
-    nav_items = [
+    items = [
         ("log", "Log Workout", ICON_WORKOUT, "navcard_log", "nav_log"),
         ("progress", "Progress", ICON_PROGRESS, "navcard_progress", "nav_progress"),
         ("history", "History", ICON_HISTORY, "navcard_history", "nav_history"),
         ("bodyweight", "Body Weight", ICON_BODY, "navcard_bodyweight", "nav_bodyweight"),
     ]
 
-    for col, (section, label, icon, card_key, button_key) in zip(cols, nav_items):
+    for col, (section, label, icon, card_key, button_key) in zip(cols, items):
         with col:
             with st.container(key=card_key):
-                st.markdown(icon_html(icon), unsafe_allow_html=True)
-                if st.button(
-                    label,
-                    key=button_key,
-                    use_container_width=True,
-                ):
+                st.markdown(_icon_html(icon), unsafe_allow_html=True)
+                if st.button(label, key=button_key, use_container_width=True):
                     st.session_state["active_section"] = section
                     st.rerun()
 
-st.markdown("<div style='height:0.35rem'></div>", unsafe_allow_html=True)
+
+def render_mobile_navigation():
+    rows = [
+        [
+            ("log", "Log Workout", ICON_WORKOUT, "mobile_navcard_log", "mobile_nav_log"),
+            ("progress", "Progress", ICON_PROGRESS, "mobile_navcard_progress", "mobile_nav_progress"),
+        ],
+        [
+            ("history", "History", ICON_HISTORY, "mobile_navcard_history", "mobile_nav_history"),
+            ("bodyweight", "Body Weight", ICON_BODY, "mobile_navcard_bodyweight", "mobile_nav_bodyweight"),
+        ],
+    ]
+
+    for row in rows:
+        cols = st.columns(2, gap="small")
+        for col, (section, label, icon, card_key, button_key) in zip(cols, row):
+            with col:
+                with st.container(key=card_key):
+                    st.markdown(
+                        _icon_html(icon, "rpl-mobile-nav-icon"),
+                        unsafe_allow_html=True,
+                    )
+                    if st.button(label, key=button_key, use_container_width=True):
+                        st.session_state["active_section"] = section
+                        st.rerun()
+
+
+if mobile:
+    render_mobile_header()
+    st.markdown("<div style='height:0.45rem'></div>", unsafe_allow_html=True)
+    render_mobile_navigation()
+else:
+    render_desktop_header()
+    st.markdown("<div style='height:0.8rem'></div>", unsafe_allow_html=True)
+    render_desktop_navigation()
+
+st.markdown("<div style='height:0.6rem'></div>", unsafe_allow_html=True)
 
 if active == "log":
     render_log_workout()

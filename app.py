@@ -64,12 +64,12 @@ st.markdown(
     /* =========================
        TOP BRAND HEADER
        ========================= */
-    .rpl-top-shell {
-        display: grid;
-        grid-template-columns: 1.2fr 1fr 0.42fr;
-        gap: 0.9rem;
-        align-items: stretch;
-        margin-bottom: 0.8rem;
+    .st-key-rpl_top_header {
+        margin-bottom: 0.9rem;
+    }
+
+    .st-key-rpl_top_header div[data-testid="stHorizontalBlock"] {
+        align-items: stretch !important;
     }
 
     .rpl-logo-panel,
@@ -183,13 +183,13 @@ st.markdown(
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 64px;
-        margin-bottom: 0.25rem;
+        height: 78px;
+        margin-bottom: 0.15rem;
     }
 
     .rpl-nav-icon-wrap img {
-        width: 54px;
-        height: 54px;
+        width: 68px;
+        height: 68px;
         object-fit: contain;
         display: block;
     }
@@ -204,25 +204,10 @@ st.markdown(
             #111419 !important;
         border-radius: 14px !important;
         padding: 0.75rem 0.75rem 0.55rem 0.75rem !important;
-        min-height: 146px;
+        min-height: 158px;
         transition: 0.16s ease;
         position: relative;
         overflow: hidden;
-    }
-
-    .st-key-navcard_log::after,
-    .st-key-navcard_progress::after,
-    .st-key-navcard_history::after,
-    .st-key-navcard_bodyweight::after {
-        content: "";
-        position: absolute;
-        left: 44%;
-        right: 44%;
-        bottom: 0.55rem;
-        height: 3px;
-        border-radius: 999px;
-        background: #e32722;
-        opacity: 0.78;
     }
 
     .st-key-navcard_log:hover,
@@ -271,34 +256,33 @@ st.markdown(
             padding-right: 0.6rem;
         }
 
-        .rpl-top-shell {
-            grid-template-columns: 1fr auto;
-            grid-template-areas:
-                "logo signout"
-                "training training";
-            gap: 0.5rem;
+        .st-key-rpl_top_header div[data-testid="stHorizontalBlock"] {
+            flex-wrap: wrap !important;
+            gap: 0.5rem !important;
+        }
+
+        .st-key-rpl_top_header div[data-testid="column"] {
+            min-width: 100% !important;
+            width: 100% !important;
+            flex: 1 1 100% !important;
         }
 
         .rpl-logo-panel {
-            grid-area: logo;
             min-height: 82px;
             padding: 0.55rem 0.7rem;
         }
 
         .rpl-logo-panel img {
-            max-width: 265px;
+            max-width: 300px;
         }
 
         .rpl-signout-panel {
-            grid-area: signout;
-            min-height: 82px;
-            width: 108px;
+            min-height: auto;
             padding: 0.45rem;
         }
 
         .rpl-training-panel {
-            grid-area: training;
-            min-height: 106px;
+            min-height: 112px;
             background-position: left center;
         }
 
@@ -343,18 +327,18 @@ st.markdown(
         .st-key-navcard_progress,
         .st-key-navcard_history,
         .st-key-navcard_bodyweight {
-            min-height: 118px;
+            min-height: 126px;
             padding: 0.5rem 0.4rem 0.45rem 0.4rem !important;
             border-radius: 11px !important;
         }
 
         .rpl-nav-icon-wrap {
-            height: 48px;
+            height: 58px;
         }
 
         .rpl-nav-icon-wrap img {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
         }
 
         .st-key-nav_log button,
@@ -391,124 +375,145 @@ active_css_map = {
         .st-key-navcard_log {
             border: 1px solid #ff3932 !important;
             background:
-                radial-gradient(circle at 18% 20%, rgba(255,50,40,0.24) 0%, rgba(255,50,40,0.10) 28%, rgba(255,50,40,0.02) 52%, rgba(0,0,0,0) 72%),
-                linear-gradient(135deg, rgba(255,45,35,0.18) 0%, rgba(92,10,12,0.14) 42%, rgba(255,255,255,0.0) 76%),
-                #171216 !important;
-            box-shadow:
-                inset 0 -4px 0 #ff2a23,
-                inset 0 0 34px rgba(255,42,35,0.08),
-                0 0 28px rgba(255,42,35,0.18);
+                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
+                #181215 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
+        }
+        
+        .st-key-navcard_log::after {
+            content: "";
+            position: absolute;
+            left: 42%;
+            right: 42%;
+            bottom: 0.55rem;
+            height: 4px;
+            border-radius: 999px;
+            background: #ff2a23;
+            box-shadow: 0 0 10px rgba(255,42,35,0.45);
         }
         .st-key-nav_log button { color: #ff4640 !important; }
+
     """,
     "progress": """
         .st-key-navcard_progress {
             border: 1px solid #ff3932 !important;
             background:
-                radial-gradient(circle at 18% 20%, rgba(255,50,40,0.24) 0%, rgba(255,50,40,0.10) 28%, rgba(255,50,40,0.02) 52%, rgba(0,0,0,0) 72%),
-                linear-gradient(135deg, rgba(255,45,35,0.18) 0%, rgba(92,10,12,0.14) 42%, rgba(255,255,255,0.0) 76%),
-                #171216 !important;
-            box-shadow:
-                inset 0 -4px 0 #ff2a23,
-                inset 0 0 34px rgba(255,42,35,0.08),
-                0 0 28px rgba(255,42,35,0.18);
+                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
+                #181215 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
+        }
+        
+        .st-key-navcard_progress::after {
+            content: "";
+            position: absolute;
+            left: 42%;
+            right: 42%;
+            bottom: 0.55rem;
+            height: 4px;
+            border-radius: 999px;
+            background: #ff2a23;
+            box-shadow: 0 0 10px rgba(255,42,35,0.45);
         }
         .st-key-nav_progress button { color: #ff4640 !important; }
+
     """,
     "history": """
         .st-key-navcard_history {
             border: 1px solid #ff3932 !important;
             background:
-                radial-gradient(circle at 18% 20%, rgba(255,50,40,0.24) 0%, rgba(255,50,40,0.10) 28%, rgba(255,50,40,0.02) 52%, rgba(0,0,0,0) 72%),
-                linear-gradient(135deg, rgba(255,45,35,0.18) 0%, rgba(92,10,12,0.14) 42%, rgba(255,255,255,0.0) 76%),
-                #171216 !important;
-            box-shadow:
-                inset 0 -4px 0 #ff2a23,
-                inset 0 0 34px rgba(255,42,35,0.08),
-                0 0 28px rgba(255,42,35,0.18);
+                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
+                #181215 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
+        }
+        
+        .st-key-navcard_history::after {
+            content: "";
+            position: absolute;
+            left: 42%;
+            right: 42%;
+            bottom: 0.55rem;
+            height: 4px;
+            border-radius: 999px;
+            background: #ff2a23;
+            box-shadow: 0 0 10px rgba(255,42,35,0.45);
         }
         .st-key-nav_history button { color: #ff4640 !important; }
+
     """,
     "bodyweight": """
         .st-key-navcard_bodyweight {
             border: 1px solid #ff3932 !important;
             background:
-                radial-gradient(circle at 18% 20%, rgba(255,50,40,0.24) 0%, rgba(255,50,40,0.10) 28%, rgba(255,50,40,0.02) 52%, rgba(0,0,0,0) 72%),
-                linear-gradient(135deg, rgba(255,45,35,0.18) 0%, rgba(92,10,12,0.14) 42%, rgba(255,255,255,0.0) 76%),
-                #171216 !important;
-            box-shadow:
-                inset 0 -4px 0 #ff2a23,
-                inset 0 0 34px rgba(255,42,35,0.08),
-                0 0 28px rgba(255,42,35,0.18);
+                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
+                #181215 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
+        }
+        
+        .st-key-navcard_bodyweight::after {
+            content: "";
+            position: absolute;
+            left: 42%;
+            right: 42%;
+            bottom: 0.55rem;
+            height: 4px;
+            border-radius: 999px;
+            background: #ff2a23;
+            box-shadow: 0 0 10px rgba(255,42,35,0.45);
         }
         .st-key-nav_bodyweight button { color: #ff4640 !important; }
+
     """,
 }
 
 st.markdown(f"<style>{active_css_map[active]}</style>", unsafe_allow_html=True)
 
-# Dynamic top shell
-st.markdown(
-    f"""
-    <div class="rpl-top-shell">
-        <div class="rpl-logo-panel">
-            <img src="{logo_uri}" alt="Razvan Performance Lab">
-        </div>
+# Dynamic top header built with Streamlit columns so HTML never renders as code.
+with st.container(key="rpl_top_header"):
+    header_logo_col, header_training_col, header_signout_col = st.columns(
+        [1.2, 1.0, 0.42],
+        vertical_alignment="center",
+        gap="medium",
+    )
 
-        <div class="rpl-training-panel">
-            <div class="rpl-training-copy">
-                <div class="rpl-training-kicker">Training as</div>
-                <div class="rpl-training-name">{display_name}</div>
-                <div class="rpl-training-tagline">Train · Track · Progress</div>
-            </div>
-        </div>
+    with header_logo_col:
+        st.markdown(
+            f"""
+<div class="rpl-logo-panel">
+    <img src="{logo_uri}" alt="Razvan Performance Lab">
+</div>
+""",
+            unsafe_allow_html=True,
+        )
 
-        <div class="rpl-signout-panel"></div>
+    with header_training_col:
+        st.markdown(
+            f"""
+<div class="rpl-training-panel">
+    <div class="rpl-training-copy">
+        <div class="rpl-training-kicker">Training as</div>
+        <div class="rpl-training-name">{display_name}</div>
+        <div class="rpl-training-tagline">Train · Track · Progress</div>
     </div>
-    """,
-    unsafe_allow_html=True,
-)
+</div>
+""",
+            unsafe_allow_html=True,
+        )
 
-# Place the functional Streamlit sign-out button visually over the third panel.
-st.markdown(
-    """
-    <style>
-    .st-key-header_sign_out {
-        margin-top: -8.05rem;
-        margin-left: auto;
-        width: calc((100% - 1.8rem) * 0.16);
-        min-width: 165px;
-        position: relative;
-        z-index: 5;
-        margin-right: 0.9rem;
-        margin-bottom: 4.7rem;
-    }
-
-    @media (max-width: 768px) {
-        .st-key-header_sign_out {
-            margin-top: -11.5rem;
-            width: 96px;
-            min-width: 96px;
-            margin-right: 0.45rem;
-            margin-bottom: 7.2rem;
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-if st.button(
-    "⏻ SIGN OUT",
-    key="header_sign_out",
-    type="primary",
-    use_container_width=True,
-):
-    sign_out()
-    st.rerun()
+    with header_signout_col:
+        st.markdown('<div class="rpl-signout-panel">', unsafe_allow_html=True)
+        if st.button(
+            "⏻ SIGN OUT",
+            key="header_sign_out",
+            type="primary",
+            use_container_width=True,
+        ):
+            sign_out()
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def icon_html(path: Path) -> str:
+
     uri = _data_uri(path)
     if not uri:
         return ""

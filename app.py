@@ -249,6 +249,82 @@ st.markdown(
     }
 
     @media (max-width: 768px) {
+
+        /* Mobile header */
+        .rpl-mobile-logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 0.35rem;
+        }
+
+        .rpl-mobile-logo img {
+            width: min(88vw, 360px) !important;
+            max-width: 360px !important;
+        }
+
+        .st-key-mobile_signout_wrap {
+            display: flex;
+            justify-content: flex-end;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .st-key-mobile_signout_wrap .st-key-header_sign_out {
+            width: auto !important;
+        }
+
+        .st-key-mobile_signout_wrap .st-key-header_sign_out button {
+            width: auto !important;
+            min-width: 118px !important;
+            min-height: 2.35rem !important;
+            padding: 0.35rem 0.9rem !important;
+            font-size: 0.72rem !important;
+            white-space: nowrap !important;
+        }
+
+        .rpl-mobile-training {
+            margin-bottom: 0.55rem !important;
+        }
+
+        /* Force each mobile nav row to remain two columns on phones. */
+        .st-key-mobile_nav_row_1 div[data-testid="stHorizontalBlock"],
+        .st-key-mobile_nav_row_2 div[data-testid="stHorizontalBlock"] {
+            display: flex !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+            gap: 0.5rem !important;
+            width: 100% !important;
+        }
+
+        .st-key-mobile_nav_row_1 div[data-testid="column"],
+        .st-key-mobile_nav_row_2 div[data-testid="column"] {
+            min-width: 0 !important;
+            width: calc(50% - 0.25rem) !important;
+            max-width: calc(50% - 0.25rem) !important;
+            flex: 0 0 calc(50% - 0.25rem) !important;
+        }
+
+        .st-key-mobile_navcard_log,
+        .st-key-mobile_navcard_progress,
+        .st-key-mobile_navcard_history,
+        .st-key-mobile_navcard_bodyweight {
+            min-height: 112px !important;
+            padding: 0.42rem 0.25rem 0.38rem 0.25rem !important;
+        }
+
+        .rpl-mobile-nav-icon {
+            width: 40px !important;
+            height: 40px !important;
+            margin-bottom: 0 !important;
+        }
+
+        .st-key-mobile_nav_log button,
+        .st-key-mobile_nav_progress button,
+        .st-key-mobile_nav_history button,
+        .st-key-mobile_nav_bodyweight button {
+            font-size: 0.76rem !important;
+            min-height: 1.8rem !important;
+            padding: 0.05rem !important;
+        }
         .block-container {
             padding-top: 0.3rem;
             padding-left: 0.55rem;
@@ -375,25 +451,21 @@ def render_desktop_header():
             st.rerun()
 
 
+
 def render_mobile_header():
-    brand_col, signout_col = st.columns(
-        [1, 0.42],
-        gap="small",
-        vertical_alignment="center",
+    # Mobile is intentionally its own layout: logo, compact sign-out,
+    # then the user/training panel. No mobile st.columns are used here.
+    st.markdown(
+        f'<div class="rpl-mobile-logo"><img src="{logo_uri}"></div>',
+        unsafe_allow_html=True,
     )
 
-    with brand_col:
-        st.markdown(
-            f'<div class="rpl-mobile-logo"><img src="{logo_uri}"></div>',
-            unsafe_allow_html=True,
-        )
-
-    with signout_col:
+    with st.container(key="mobile_signout_wrap"):
         if st.button(
-            "⏻ OUT",
+            "SIGN OUT",
             key="header_sign_out",
             type="primary",
-            use_container_width=True,
+            use_container_width=False,
         ):
             sign_out()
             st.rerun()
@@ -411,6 +483,7 @@ def render_mobile_header():
 
 
 def render_desktop_navigation():
+
     cols = st.columns(4, gap="medium")
 
     items = [
@@ -429,30 +502,41 @@ def render_desktop_navigation():
                     st.rerun()
 
 
-def render_mobile_navigation():
-    rows = [
-        [
-            ("log", "Log Workout", ICON_WORKOUT, "mobile_navcard_log", "mobile_nav_log"),
-            ("progress", "Progress", ICON_PROGRESS, "mobile_navcard_progress", "mobile_nav_progress"),
-        ],
-        [
-            ("history", "History", ICON_HISTORY, "mobile_navcard_history", "mobile_nav_history"),
-            ("bodyweight", "Body Weight", ICON_BODY, "mobile_navcard_bodyweight", "mobile_nav_bodyweight"),
-        ],
-    ]
 
-    for row in rows:
-        cols = st.columns(2, gap="small")
-        for col, (section, label, icon, card_key, button_key) in zip(cols, row):
-            with col:
-                with st.container(key=card_key):
-                    st.markdown(
-                        _icon_html(icon, "rpl-mobile-nav-icon"),
-                        unsafe_allow_html=True,
-                    )
-                    if st.button(label, key=button_key, use_container_width=True):
-                        st.session_state["active_section"] = section
-                        st.rerun()
+def _render_mobile_nav_item(col, section, label, icon, card_key, button_key):
+    with col:
+        with st.container(key=card_key):
+            st.markdown(
+                _icon_html(icon, "rpl-mobile-nav-icon"),
+                unsafe_allow_html=True,
+            )
+            if st.button(label, key=button_key, use_container_width=True):
+                st.session_state["active_section"] = section
+                st.rerun()
+
+
+def render_mobile_navigation():
+    with st.container(key="mobile_nav_row_1"):
+        c1, c2 = st.columns(2, gap="small")
+        _render_mobile_nav_item(
+            c1, "log", "Log Workout", ICON_WORKOUT,
+            "mobile_navcard_log", "mobile_nav_log"
+        )
+        _render_mobile_nav_item(
+            c2, "progress", "Progress", ICON_PROGRESS,
+            "mobile_navcard_progress", "mobile_nav_progress"
+        )
+
+    with st.container(key="mobile_nav_row_2"):
+        c3, c4 = st.columns(2, gap="small")
+        _render_mobile_nav_item(
+            c3, "history", "History", ICON_HISTORY,
+            "mobile_navcard_history", "mobile_nav_history"
+        )
+        _render_mobile_nav_item(
+            c4, "bodyweight", "Body Weight", ICON_BODY,
+            "mobile_navcard_bodyweight", "mobile_nav_bodyweight"
+        )
 
 
 if mobile:

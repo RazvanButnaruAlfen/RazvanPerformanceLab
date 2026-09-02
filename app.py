@@ -1,3 +1,6 @@
+from pathlib import Path
+
+from PIL import Image
 import streamlit as st
 
 from Components.auth_ui import render_auth_screen
@@ -7,9 +10,14 @@ from Pages.progress import render as render_progress
 from Pages.workout_history import render as render_workout_history
 from Services.auth import get_profile, is_authenticated, sign_out
 
+APP_ICON = Path("Assets/app_icon.png")
+APP_LOGO = Path("Assets/app_logo.png")
+
+page_icon = Image.open(APP_ICON) if APP_ICON.exists() else "🏋️"
+
 st.set_page_config(
     page_title="Razvan Performance Lab",
-    page_icon="🏋️",
+    page_icon=page_icon,
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -17,6 +25,7 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+    /* Hide Streamlit chrome / Fork controls */
     section[data-testid="stSidebar"] {
         display: none !important;
     }
@@ -25,12 +34,36 @@ st.markdown(
         display: none !important;
     }
 
+    [data-testid="stToolbar"] {
+        display: none !important;
+    }
+
+    [data-testid="stDecoration"] {
+        display: none !important;
+    }
+
+    #MainMenu {
+        visibility: hidden !important;
+    }
+
+    header[data-testid="stHeader"] {
+        visibility: hidden !important;
+        height: 0 !important;
+    }
+
+    /* Main layout */
     .block-container {
         max-width: 1500px;
         padding-top: 1rem;
         padding-bottom: 2rem;
         padding-left: 2rem;
         padding-right: 2rem;
+    }
+
+    .rpl-userline {
+        opacity: 0.72;
+        font-size: 0.95rem;
+        margin-top: 0.1rem;
     }
 
     div[data-baseweb="tab-list"] {
@@ -53,12 +86,18 @@ st.markdown(
         overflow-x: auto;
     }
 
+    /* Mobile */
     @media (max-width: 768px) {
         .block-container {
-            padding-top: 0.7rem;
-            padding-bottom: 1.5rem;
+            padding-top: 0.55rem;
+            padding-bottom: 1.25rem;
             padding-left: 0.75rem;
             padding-right: 0.75rem;
+        }
+
+        .rpl-userline {
+            font-size: 0.84rem;
+            margin-top: 0;
         }
 
         h1 {
@@ -74,9 +113,9 @@ st.markdown(
         }
 
         button[data-baseweb="tab"] {
-            font-size: 0.88rem;
-            padding-left: 0.7rem;
-            padding-right: 0.7rem;
+            font-size: 0.84rem;
+            padding-left: 0.55rem;
+            padding-right: 0.55rem;
         }
 
         div[data-testid="stHorizontalBlock"] {
@@ -89,7 +128,6 @@ st.markdown(
             flex: 1 1 100% !important;
         }
 
-        .stButton > button,
         .stFormSubmitButton > button {
             width: 100%;
         }
@@ -120,14 +158,21 @@ avatar = (
     else "🏋️"
 )
 
-header_left, header_right = st.columns([5, 1])
+header_left, header_right = st.columns([6, 1], vertical_alignment="center")
 
 with header_left:
-    st.title("🏋️ Razvan Performance Lab")
-    st.caption(f"{avatar} Training as **{display_name}**")
+    if APP_LOGO.exists():
+        st.image(str(APP_LOGO), width=430)
+    else:
+        st.title("🏋️ Razvan Performance Lab")
+
+    st.markdown(
+        f'<div class="rpl-userline">{avatar} Training as <strong>{display_name}</strong></div>',
+        unsafe_allow_html=True,
+    )
 
 with header_right:
-    if st.button("Sign out", use_container_width=True):
+    if st.button("Sign out", key="header_sign_out", use_container_width=True):
         sign_out()
         st.rerun()
 

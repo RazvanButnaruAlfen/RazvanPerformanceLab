@@ -273,6 +273,40 @@ st.markdown(
     }
 
 
+
+    /* Prevent browser/Streamlit text-caret artifacts in non-editable UI.
+       Keep the caret only inside real form fields. */
+    body,
+    body *:not(input):not(textarea):not([contenteditable="true"]) {
+        caret-color: transparent !important;
+    }
+
+    input,
+    textarea,
+    [contenteditable="true"] {
+        caret-color: auto !important;
+    }
+
+    /* Remove focus rings/caret-like outlines from decorative containers/cards.
+       Real form inputs keep their native focus behaviour. */
+    [data-testid="stVerticalBlockBorderWrapper"]:focus,
+    [data-testid="stVerticalBlockBorderWrapper"]:focus-visible,
+    [data-testid="stHorizontalBlock"]:focus,
+    [data-testid="stHorizontalBlock"]:focus-visible,
+    [data-testid="stImage"]:focus,
+    [data-testid="stImage"]:focus-visible,
+    .st-key-navcard_log:focus,
+    .st-key-navcard_progress:focus,
+    .st-key-navcard_history:focus,
+    .st-key-navcard_bodyweight:focus,
+    .st-key-mobile_navcard_log:focus,
+    .st-key-mobile_navcard_progress:focus,
+    .st-key-mobile_navcard_history:focus,
+    .st-key-mobile_navcard_bodyweight:focus {
+        outline: none !important;
+        box-shadow: none !important;
+    }
+
     @media (max-width: 768px) {
 
         /* Mobile header */

@@ -73,8 +73,7 @@ st.markdown(
     }
 
     .rpl-logo-panel,
-    .rpl-training-panel,
-    .rpl-signout-panel {
+    .rpl-training-panel {
         background:
             linear-gradient(180deg, rgba(18,20,24,0.98), rgba(8,10,13,0.98));
         border: 1px solid #252a31;
@@ -101,8 +100,8 @@ st.markdown(
         background-image:
             linear-gradient(90deg, rgba(8,10,13,0.12) 0%, rgba(8,10,13,0.70) 44%, rgba(8,10,13,0.98) 78%),
             url("__TRAINING_BG__");
-        background-size: cover;
-        background-position: left center;
+        background-size: 118% auto;
+        background-position: 42% center;
     }
 
     .rpl-training-copy {
@@ -143,14 +142,14 @@ st.markdown(
         text-transform: uppercase;
     }
 
-    .rpl-signout-panel {
+    .st-key-header_sign_out {
+        width: 100%;
         display: flex;
         align-items: center;
-        justify-content: center;
-        padding: 0.8rem;
+        min-height: 154px;
     }
 
-    .st-key-header_sign_out {
+    .st-key-header_sign_out > div {
         width: 100%;
     }
 
@@ -276,14 +275,9 @@ st.markdown(
             max-width: 300px;
         }
 
-        .rpl-signout-panel {
-            min-height: auto;
-            padding: 0.45rem;
-        }
-
         .rpl-training-panel {
             min-height: 112px;
-            background-position: left center;
+            background-position: 42% center;
         }
 
         .rpl-training-copy {
@@ -303,6 +297,10 @@ st.markdown(
         .rpl-training-tagline {
             font-size: 0.56rem;
             letter-spacing: 0.12em;
+        }
+
+        .st-key-header_sign_out {
+            min-height: auto;
         }
 
         .st-key-header_sign_out button {
@@ -500,7 +498,6 @@ with st.container(key="rpl_top_header"):
         )
 
     with header_signout_col:
-        st.markdown('<div class="rpl-signout-panel">', unsafe_allow_html=True)
         if st.button(
             "⏻ SIGN OUT",
             key="header_sign_out",
@@ -509,7 +506,6 @@ with st.container(key="rpl_top_header"):
         ):
             sign_out()
             st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
 
 
 def icon_html(path: Path) -> str:

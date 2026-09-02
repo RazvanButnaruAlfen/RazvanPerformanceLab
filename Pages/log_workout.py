@@ -12,12 +12,6 @@ def render():
     st.subheader("Log Workout")
     st.caption("Record working sets so each session can be compared with the previous one.")
 
-    if not using_supabase():
-        st.info(
-            "Local mode: data is being stored in SQLite. "
-            "For permanent Streamlit Cloud storage, connect Supabase."
-        )
-
     col1, col2 = st.columns([1, 2])
 
     with col1:

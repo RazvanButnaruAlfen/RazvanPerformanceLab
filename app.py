@@ -183,13 +183,13 @@ st.markdown(
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 48px;
-        margin-bottom: 0.2rem;
+        height: 64px;
+        margin-bottom: 0.25rem;
     }
 
     .rpl-nav-icon-wrap img {
-        width: 40px;
-        height: 40px;
+        width: 54px;
+        height: 54px;
         object-fit: contain;
         display: block;
     }
@@ -204,7 +204,7 @@ st.markdown(
             #111419 !important;
         border-radius: 14px !important;
         padding: 0.75rem 0.75rem 0.55rem 0.75rem !important;
-        min-height: 132px;
+        min-height: 146px;
         transition: 0.16s ease;
         position: relative;
         overflow: hidden;
@@ -343,18 +343,18 @@ st.markdown(
         .st-key-navcard_progress,
         .st-key-navcard_history,
         .st-key-navcard_bodyweight {
-            min-height: 108px;
+            min-height: 118px;
             padding: 0.5rem 0.4rem 0.45rem 0.4rem !important;
             border-radius: 11px !important;
         }
 
         .rpl-nav-icon-wrap {
-            height: 38px;
+            height: 48px;
         }
 
         .rpl-nav-icon-wrap img {
-            width: 31px;
-            height: 31px;
+            width: 40px;
+            height: 40px;
         }
 
         .st-key-nav_log button,
@@ -391,9 +391,13 @@ active_css_map = {
         .st-key-navcard_log {
             border: 1px solid #ff3932 !important;
             background:
-                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
-                #181215 !important;
-            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
+                radial-gradient(circle at 18% 20%, rgba(255,50,40,0.24) 0%, rgba(255,50,40,0.10) 28%, rgba(255,50,40,0.02) 52%, rgba(0,0,0,0) 72%),
+                linear-gradient(135deg, rgba(255,45,35,0.18) 0%, rgba(92,10,12,0.14) 42%, rgba(255,255,255,0.0) 76%),
+                #171216 !important;
+            box-shadow:
+                inset 0 -4px 0 #ff2a23,
+                inset 0 0 34px rgba(255,42,35,0.08),
+                0 0 28px rgba(255,42,35,0.18);
         }
         .st-key-nav_log button { color: #ff4640 !important; }
     """,
@@ -401,9 +405,13 @@ active_css_map = {
         .st-key-navcard_progress {
             border: 1px solid #ff3932 !important;
             background:
-                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
-                #181215 !important;
-            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
+                radial-gradient(circle at 18% 20%, rgba(255,50,40,0.24) 0%, rgba(255,50,40,0.10) 28%, rgba(255,50,40,0.02) 52%, rgba(0,0,0,0) 72%),
+                linear-gradient(135deg, rgba(255,45,35,0.18) 0%, rgba(92,10,12,0.14) 42%, rgba(255,255,255,0.0) 76%),
+                #171216 !important;
+            box-shadow:
+                inset 0 -4px 0 #ff2a23,
+                inset 0 0 34px rgba(255,42,35,0.08),
+                0 0 28px rgba(255,42,35,0.18);
         }
         .st-key-nav_progress button { color: #ff4640 !important; }
     """,
@@ -411,9 +419,13 @@ active_css_map = {
         .st-key-navcard_history {
             border: 1px solid #ff3932 !important;
             background:
-                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
-                #181215 !important;
-            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
+                radial-gradient(circle at 18% 20%, rgba(255,50,40,0.24) 0%, rgba(255,50,40,0.10) 28%, rgba(255,50,40,0.02) 52%, rgba(0,0,0,0) 72%),
+                linear-gradient(135deg, rgba(255,45,35,0.18) 0%, rgba(92,10,12,0.14) 42%, rgba(255,255,255,0.0) 76%),
+                #171216 !important;
+            box-shadow:
+                inset 0 -4px 0 #ff2a23,
+                inset 0 0 34px rgba(255,42,35,0.08),
+                0 0 28px rgba(255,42,35,0.18);
         }
         .st-key-nav_history button { color: #ff4640 !important; }
     """,
@@ -421,9 +433,13 @@ active_css_map = {
         .st-key-navcard_bodyweight {
             border: 1px solid #ff3932 !important;
             background:
-                linear-gradient(135deg, rgba(255,45,35,0.11), rgba(255,255,255,0.0) 48%),
-                #181215 !important;
-            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 24px rgba(255,42,35,0.14);
+                radial-gradient(circle at 18% 20%, rgba(255,50,40,0.24) 0%, rgba(255,50,40,0.10) 28%, rgba(255,50,40,0.02) 52%, rgba(0,0,0,0) 72%),
+                linear-gradient(135deg, rgba(255,45,35,0.18) 0%, rgba(92,10,12,0.14) 42%, rgba(255,255,255,0.0) 76%),
+                #171216 !important;
+            box-shadow:
+                inset 0 -4px 0 #ff2a23,
+                inset 0 0 34px rgba(255,42,35,0.08),
+                0 0 28px rgba(255,42,35,0.18);
         }
         .st-key-nav_bodyweight button { color: #ff4640 !important; }
     """,

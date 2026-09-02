@@ -6,10 +6,11 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
+from Services.database import get_user_exercises
 
-def load_exercises() -> list[str]:
+
+def load_default_exercises() -> list[str]:
     path = Path("Data/exercises.json")
-
     if not path.exists():
         return []
 
@@ -19,20 +20,42 @@ def load_exercises() -> list[str]:
     return [item["name"] for item in data]
 
 
-def workout_editor(key: str = "workout_editor") -> pd.DataFrame:
+def load_exercises() -> list[str]:
+    default_exercises = load_default_exercises()
+    custom_exercises = get_user_exercises()
+
+    combined = []
+    seen = set()
+
+    for name in default_exercises + custom_exercises:
+        key = name.casefold()
+        if key not in seen:
+            seen.add(key)
+            combined.append(name)
+
+    return sorted(combined, key=str.casefold)
+
+
+def workout_editor(
+    key: str = "workout_editor",
+    initial_data: pd.DataFrame | None = None,
+) -> pd.DataFrame:
     exercises = load_exercises()
 
-    starter = pd.DataFrame(
-        [
-            {
-                "exercise": exercises[0] if exercises else "",
-                "set_number": 1,
-                "weight_kg": 0.0,
-                "reps": 0,
-                "rir": None,
-            }
-        ]
-    )
+    if initial_data is None:
+        starter = pd.DataFrame(
+            [
+                {
+                    "exercise": exercises[0] if exercises else "",
+                    "set_number": 1,
+                    "weight_kg": 0.0,
+                    "reps": 0,
+                    "rir": None,
+                }
+            ]
+        )
+    else:
+        starter = initial_data.copy()
 
     return st.data_editor(
         starter,

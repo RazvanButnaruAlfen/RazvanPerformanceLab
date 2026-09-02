@@ -9,31 +9,45 @@ APP_LOGO = Path("Assets/app_logo.png")
 
 
 def render_auth_screen():
-    # Desktop: artwork and login side-by-side.
-    # Mobile: Streamlit stacks the columns vertically.
+    st.markdown(
+        """
+        <style>
+        .auth-copy {
+            opacity: 0.72;
+            margin-top: -0.25rem;
+            margin-bottom: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .auth-mobile-logo img {
+                max-width: 310px !important;
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Desktop: artwork left, real form right.
+    # Mobile: Streamlit stacks these vertically.
     hero_col, form_col = st.columns([1.05, 1], gap="large")
 
     with hero_col:
         if LOGIN_HERO.exists():
             st.image(str(LOGIN_HERO), use_container_width=True)
-        elif APP_LOGO.exists():
-            st.image(str(APP_LOGO), use_container_width=True)
 
     with form_col:
         if APP_LOGO.exists():
-            st.image(str(APP_LOGO), width=430)
+            st.markdown('<div class="auth-mobile-logo">', unsafe_allow_html=True)
+            st.image(str(APP_LOGO), width=360)
+            st.markdown("</div>", unsafe_allow_html=True)
         else:
-            st.markdown(
-                """
-                <div style="text-align:center;">
-                    <div style="font-size:3rem;">🏋️</div>
-                    <h1>Razvan Performance Lab</h1>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            st.title("Razvan Performance Lab")
 
-        st.caption("Your personal training and bodyweight tracker.")
+        st.markdown(
+            '<div class="auth-copy">Your personal training and bodyweight tracker.</div>',
+            unsafe_allow_html=True,
+        )
 
         login_tab, signup_tab = st.tabs(["Sign in", "Create account"])
 

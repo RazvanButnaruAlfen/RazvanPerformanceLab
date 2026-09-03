@@ -61,6 +61,19 @@ st.markdown(
         height: 0 !important;
     }
 
+
+    /* Hide text-selection caret on ordinary app text.
+       Keep the caret visible inside real inputs/textareas. */
+    body *:not(input):not(textarea):not([contenteditable="true"]) {
+        caret-color: transparent !important;
+    }
+
+    input,
+    textarea,
+    [contenteditable="true"] {
+        caret-color: auto !important;
+    }
+
     .block-container {
         max-width: 1580px;
         padding-top: 0.5rem;

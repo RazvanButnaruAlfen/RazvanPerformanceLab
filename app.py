@@ -567,117 +567,134 @@ def render_mobile_navigation():
     st.markdown(
         f"""
         <style>
-        /* The whole widget is a true two-column grid. No Streamlit columns. */
-        .st-key-mobile_nav_radio div[role="radiogroup"] {{
+
+        /* Full-width mobile navigation */
+        .st-key-mobile_nav_radio,
+        .st-key-mobile_nav_radio [data-testid="stRadio"],
+        .st-key-mobile_nav_radio fieldset,
+        .st-key-mobile_nav_radio div[role="radiogroup"] {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .st-key-mobile_nav_radio {
+            margin-top: 0.2rem !important;
+            margin-bottom: 0.7rem !important;
+        }
+
+        .st-key-mobile_nav_radio div[role="radiogroup"] {
             display: grid !important;
             grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 0.48rem !important;
-            width: 100% !important;
-            max-width: 100% !important;
-        }}
+            gap: 0.6rem !important;
+        }
 
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label {{
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label {
             width: 100% !important;
-            min-width: 0 !important;
             max-width: 100% !important;
-            min-height: 94px !important;
+            min-width: 0 !important;
+            min-height: 128px !important;
             margin: 0 !important;
-            padding: 0.48rem 0.25rem 0.40rem 0.25rem !important;
+            padding: 0.65rem 0.45rem 0.55rem 0.45rem !important;
             border: 1px solid #343940 !important;
-            border-radius: 10px !important;
+            border-radius: 12px !important;
             background: #111419 !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.22rem !important;
             position: relative !important;
             overflow: hidden !important;
             box-sizing: border-box !important;
-        }}
+        }
 
-        /* Hide the normal radio dot. */
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label > div:first-child {{
+        /* Hide Streamlit's normal radio-circle UI completely. */
+        .st-key-mobile_nav_radio label[data-baseweb="radio"] > div:first-child,
+        .st-key-mobile_nav_radio label[data-baseweb="radio"] input,
+        .st-key-mobile_nav_radio label[data-baseweb="radio"] [role="radio"] {
             display: none !important;
-        }}
-
-        /* Label text */
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label p {{
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
             margin: 0 !important;
-            padding-top: 2.25rem !important;
+            padding: 0 !important;
+        }
+
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label p {
+            margin: 0 !important;
+            padding-top: 3.0rem !important;
             text-align: center !important;
-            font-size: 0.76rem !important;
+            font-size: 0.92rem !important;
             line-height: 1.08 !important;
             font-weight: 700 !important;
             color: #f1f2f4 !important;
             white-space: normal !important;
-        }}
+        }
 
-        /* Icons */
         .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(1)::before,
         .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(2)::before,
         .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(3)::before,
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(4)::before {{
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(4)::before {
             content: "";
             position: absolute;
-            top: 0.65rem;
+            top: 0.9rem;
             left: 50%;
             transform: translateX(-50%);
-            width: 36px;
-            height: 36px;
+            width: 50px;
+            height: 50px;
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-        }}
+        }
 
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(1)::before {{
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(1)::before {
             background-image: url("{icon_uris['log']}");
-        }}
+        }
 
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(2)::before {{
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(2)::before {
             background-image: url("{icon_uris['progress']}");
-        }}
+        }
 
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(3)::before {{
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(3)::before {
             background-image: url("{icon_uris['history']}");
-        }}
+        }
 
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(4)::before {{
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(4)::before {
             background-image: url("{icon_uris['bodyweight']}");
-        }}
+        }
 
-        /* Selected card */
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked) {{
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked) {
             border-color: #ff3932 !important;
             background:
                 radial-gradient(
                     circle at 18% 18%,
-                    rgba(255, 50, 40, 0.25),
-                    rgba(255, 50, 40, 0.08) 36%,
-                    rgba(0,0,0,0) 72%
+                    rgba(255, 50, 40, 0.28),
+                    rgba(255, 50, 40, 0.10) 38%,
+                    rgba(0,0,0,0) 74%
                 ),
                 #171216 !important;
             box-shadow:
                 inset 0 -4px 0 #ff2a23,
-                inset 0 0 24px rgba(255,42,35,0.05),
-                0 0 18px rgba(255,42,35,0.12) !important;
-        }}
+                inset 0 0 26px rgba(255,42,35,0.06),
+                0 0 18px rgba(255,42,35,0.14) !important;
+        }
 
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked) p {{
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked) p {
             color: #ff4b45 !important;
-        }}
+        }
 
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked)::after {{
+        .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked)::after {
             content: "";
             position: absolute;
-            left: 40%;
-            right: 40%;
-            bottom: 0.30rem;
-            height: 3px;
+            left: 38%;
+            right: 38%;
+            bottom: 0.35rem;
+            height: 4px;
             border-radius: 999px;
             background: #ff2a23;
             box-shadow: 0 0 8px rgba(255,42,35,0.45);
-        }}
+        }
 
         @media (max-width: 420px) {{
             .st-key-mobile_nav_radio div[role="radiogroup"] > label {{

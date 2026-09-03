@@ -733,6 +733,31 @@ def render_mobile_navigation():
         pointer-events: none !important;
     }
 
+
+    /* Precisely hide Streamlit's radio-control wrapper only. */
+    .st-key-mobile_nav_radio label[data-baseweb="radio"] > div:first-child {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        min-width: 1px !important;
+        min-height: 1px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        opacity: 0 !important;
+        overflow: hidden !important;
+        pointer-events: none !important;
+    }
+
+    /* Explicitly preserve the visible label wrapper. */
+    .st-key-mobile_nav_radio label[data-baseweb="radio"] > div:nth-child(2) {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100% !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
     /* Keep label content visible and centered. */
     .st-key-mobile_nav_radio div[role="radiogroup"] > label > div {
         width: 100% !important;

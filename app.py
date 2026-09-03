@@ -707,6 +707,42 @@ def render_mobile_navigation():
         box-shadow: 0 0 8px rgba(255,42,35,0.45);
     }
 
+
+    /* Mobile nav cleanup: no radio dots, only card highlight */
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label input[type="radio"],
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label [role="radio"],
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label svg,
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label > div:first-child,
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label > div > div:first-child {
+        display: none !important;
+        visibility: hidden !important;
+        width: 0 !important;
+        height: 0 !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        opacity: 0 !important;
+        position: absolute !important;
+        pointer-events: none !important;
+    }
+
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label p {
+        width: 100% !important;
+        margin: 0 !important;
+        padding-top: 3.0rem !important;
+        text-align: center !important;
+        justify-content: center !important;
+    }
+
     @media (max-width: 420px) {
         .st-key-mobile_nav_radio div[role="radiogroup"] > label {
             min-height: 116px !important;

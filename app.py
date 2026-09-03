@@ -717,11 +717,9 @@ def render_mobile_navigation():
         text-align: center !important;
     }
 
+    /* Hide only the actual radio control, not the text container. */
     .st-key-mobile_nav_radio div[role="radiogroup"] > label input[type="radio"],
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label [role="radio"],
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label svg,
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label > div:first-child,
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label > div > div:first-child {
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label [role="radio"] {
         display: none !important;
         visibility: hidden !important;
         width: 0 !important;
@@ -733,6 +731,29 @@ def render_mobile_navigation():
         opacity: 0 !important;
         position: absolute !important;
         pointer-events: none !important;
+    }
+
+    /* Keep label content visible and centered. */
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label > div {
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label p {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding-top: 3.0rem !important;
+        text-align: center !important;
+        color: #f1f2f4 !important;
+    }
+
+    .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked) p {
+        color: #ff4b45 !important;
     }
 
     .st-key-mobile_nav_radio div[role="radiogroup"] > label p {

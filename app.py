@@ -556,21 +556,12 @@ def render_desktop_navigation():
 
 
 
+
 def render_mobile_navigation():
     """
-    Mobile navigation uses one native Streamlit radio widget styled as
-    a true full-width 2x2 card grid.
-
-    CSS is built as a normal string and placeholders are replaced afterward.
-    This avoids Python interpreting CSS braces inside an f-string.
+    Mobile navigation uses two horizontal containers with two real buttons each.
+    No radio widget is used, so there are no radio dots to hide.
     """
-    options = ["log", "progress", "history", "bodyweight"]
-    labels = {
-        "log": "Log Workout",
-        "progress": "Progress",
-        "history": "History",
-        "bodyweight": "Body Weight",
-    }
 
     icon_uris = {
         "log": _data_uri(ICON_WORKOUT),
@@ -581,234 +572,194 @@ def render_mobile_navigation():
 
     nav_css = """
     <style>
-    .st-key-mobile_nav_radio,
-    .st-key-mobile_nav_radio [data-testid="stRadio"],
-    .st-key-mobile_nav_radio fieldset,
-    .st-key-mobile_nav_radio div[role="radiogroup"] {
+    .st-key-mobile_nav_row_1,
+    .st-key-mobile_nav_row_2 {
         width: 100% !important;
         max-width: 100% !important;
+        gap: 0.55rem !important;
+        margin-bottom: 0.55rem !important;
+    }
+
+    .st-key-mobile_nav_row_1 > div,
+    .st-key-mobile_nav_row_2 > div {
+        width: 100% !important;
+    }
+
+    .st-key-mobile_btn_log,
+    .st-key-mobile_btn_progress,
+    .st-key-mobile_btn_history,
+    .st-key-mobile_btn_bodyweight {
+        flex: 1 1 0 !important;
         min-width: 0 !important;
-        box-sizing: border-box !important;
-    }
-
-    .st-key-mobile_nav_radio {
-        margin-top: 0.2rem !important;
-        margin-bottom: 0.7rem !important;
-    }
-
-    .st-key-mobile_nav_radio div[role="radiogroup"] {
-        display: grid !important;
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 0.6rem !important;
-    }
-
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label {
         width: 100% !important;
-        max-width: 100% !important;
+    }
+
+    .st-key-mobile_btn_log button,
+    .st-key-mobile_btn_progress button,
+    .st-key-mobile_btn_history button,
+    .st-key-mobile_btn_bodyweight button {
+        width: 100% !important;
         min-width: 0 !important;
         min-height: 128px !important;
-        margin: 0 !important;
-        padding: 0.65rem 0.45rem 0.55rem 0.45rem !important;
         border: 1px solid #343940 !important;
         border-radius: 12px !important;
         background: #111419 !important;
+        color: #f2f3f5 !important;
+        font-size: 0.92rem !important;
+        font-weight: 700 !important;
         display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
-        justify-content: center !important;
+        justify-content: flex-end !important;
+        gap: 0.25rem !important;
+        padding: 4.4rem 0.35rem 1.0rem 0.35rem !important;
         position: relative !important;
         overflow: hidden !important;
-        box-sizing: border-box !important;
+        box-shadow: none !important;
     }
 
-    .st-key-mobile_nav_radio label[data-baseweb="radio"] > div:first-child,
-    .st-key-mobile_nav_radio label[data-baseweb="radio"] input,
-    .st-key-mobile_nav_radio label[data-baseweb="radio"] [role="radio"] {
-        display: none !important;
-        visibility: hidden !important;
-        width: 0 !important;
-        height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label p {
-        margin: 0 !important;
-        padding-top: 3.0rem !important;
-        text-align: center !important;
-        font-size: 0.92rem !important;
-        line-height: 1.08 !important;
-        font-weight: 700 !important;
-        color: #f1f2f4 !important;
-        white-space: normal !important;
-    }
-
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(1)::before,
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(2)::before,
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(3)::before,
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(4)::before {
+    .st-key-mobile_btn_log button::before,
+    .st-key-mobile_btn_progress button::before,
+    .st-key-mobile_btn_history button::before,
+    .st-key-mobile_btn_bodyweight button::before {
         content: "";
         position: absolute;
-        top: 0.9rem;
+        top: 1.0rem;
         left: 50%;
         transform: translateX(-50%);
-        width: 50px;
-        height: 50px;
+        width: 52px;
+        height: 52px;
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
     }
 
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(1)::before {
+    .st-key-mobile_btn_log button::before {
         background-image: url("__ICON_LOG__");
     }
 
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(2)::before {
+    .st-key-mobile_btn_progress button::before {
         background-image: url("__ICON_PROGRESS__");
     }
 
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(3)::before {
+    .st-key-mobile_btn_history button::before {
         background-image: url("__ICON_HISTORY__");
     }
 
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(4)::before {
+    .st-key-mobile_btn_bodyweight button::before {
         background-image: url("__ICON_BODY__");
     }
 
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked) {
-        border-color: #ff3932 !important;
-        background:
-            radial-gradient(
-                circle at 18% 18%,
-                rgba(255, 50, 40, 0.28),
-                rgba(255, 50, 40, 0.10) 38%,
-                rgba(0,0,0,0) 74%
-            ),
-            #171216 !important;
-        box-shadow:
-            inset 0 -4px 0 #ff2a23,
-            inset 0 0 26px rgba(255,42,35,0.06),
-            0 0 18px rgba(255,42,35,0.14) !important;
-    }
-
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked) p {
-        color: #ff4b45 !important;
-    }
-
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked)::after {
-        content: "";
-        position: absolute;
-        left: 38%;
-        right: 38%;
-        bottom: 0.35rem;
-        height: 4px;
-        border-radius: 999px;
-        background: #ff2a23;
-        box-shadow: 0 0 8px rgba(255,42,35,0.45);
-    }
-
-
-    /* Mobile nav cleanup: no radio dots, only card highlight */
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-align: center !important;
-    }
-
-    /* Hide only the actual radio control, not the text container. */
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label input[type="radio"],
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label [role="radio"] {
-        display: none !important;
-        visibility: hidden !important;
-        width: 0 !important;
-        height: 0 !important;
-        min-width: 0 !important;
-        min-height: 0 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        opacity: 0 !important;
-        position: absolute !important;
-        pointer-events: none !important;
-    }
-
-
-    /* Precisely hide Streamlit's radio-control wrapper only. */
-    .st-key-mobile_nav_radio label[data-baseweb="radio"] > div:first-child {
-        position: absolute !important;
-        width: 1px !important;
-        height: 1px !important;
-        min-width: 1px !important;
-        min-height: 1px !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        opacity: 0 !important;
-        overflow: hidden !important;
-        pointer-events: none !important;
-    }
-
-    /* Explicitly preserve the visible label wrapper. */
-    .st-key-mobile_nav_radio label[data-baseweb="radio"] > div:nth-child(2) {
-        display: flex !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        width: 100% !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    /* Keep label content visible and centered. */
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label > div {
-        width: 100% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label p {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding-top: 3.0rem !important;
-        text-align: center !important;
-        color: #f1f2f4 !important;
-    }
-
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label:has(input:checked) p {
-        color: #ff4b45 !important;
-    }
-
-    .st-key-mobile_nav_radio div[role="radiogroup"] > label p {
-        width: 100% !important;
-        margin: 0 !important;
-        padding-top: 3.0rem !important;
-        text-align: center !important;
-        justify-content: center !important;
-    }
+    __ACTIVE_MOBILE_CSS__
 
     @media (max-width: 420px) {
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label {
+        .st-key-mobile_btn_log button,
+        .st-key-mobile_btn_progress button,
+        .st-key-mobile_btn_history button,
+        .st-key-mobile_btn_bodyweight button {
             min-height: 116px !important;
-        }
-
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label p {
             font-size: 0.84rem !important;
-            padding-top: 2.7rem !important;
+            padding-top: 4.0rem !important;
         }
 
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(1)::before,
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(2)::before,
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(3)::before,
-        .st-key-mobile_nav_radio div[role="radiogroup"] > label:nth-child(4)::before {
-            width: 44px;
-            height: 44px;
+        .st-key-mobile_btn_log button::before,
+        .st-key-mobile_btn_progress button::before,
+        .st-key-mobile_btn_history button::before,
+        .st-key-mobile_btn_bodyweight button::before {
+            width: 46px;
+            height: 46px;
+            top: 0.9rem;
         }
     }
     </style>
     """
+
+    active_mobile_css = {
+        "log": """
+        .st-key-mobile_btn_log button {
+            border-color: #ff3932 !important;
+            color: #ff4b45 !important;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255,50,40,0.28), rgba(255,50,40,0.10) 38%, rgba(0,0,0,0) 74%),
+                #171216 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 18px rgba(255,42,35,0.14) !important;
+        }
+        .st-key-mobile_btn_log button::after {
+            content: "";
+            position: absolute;
+            left: 38%;
+            right: 38%;
+            bottom: 0.35rem;
+            height: 4px;
+            border-radius: 999px;
+            background: #ff2a23;
+            box-shadow: 0 0 8px rgba(255,42,35,0.45);
+        }
+        """,
+        "progress": """
+        .st-key-mobile_btn_progress button {
+            border-color: #ff3932 !important;
+            color: #ff4b45 !important;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255,50,40,0.28), rgba(255,50,40,0.10) 38%, rgba(0,0,0,0) 74%),
+                #171216 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 18px rgba(255,42,35,0.14) !important;
+        }
+        .st-key-mobile_btn_progress button::after {
+            content: "";
+            position: absolute;
+            left: 38%;
+            right: 38%;
+            bottom: 0.35rem;
+            height: 4px;
+            border-radius: 999px;
+            background: #ff2a23;
+            box-shadow: 0 0 8px rgba(255,42,35,0.45);
+        }
+        """,
+        "history": """
+        .st-key-mobile_btn_history button {
+            border-color: #ff3932 !important;
+            color: #ff4b45 !important;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255,50,40,0.28), rgba(255,50,40,0.10) 38%, rgba(0,0,0,0) 74%),
+                #171216 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 18px rgba(255,42,35,0.14) !important;
+        }
+        .st-key-mobile_btn_history button::after {
+            content: "";
+            position: absolute;
+            left: 38%;
+            right: 38%;
+            bottom: 0.35rem;
+            height: 4px;
+            border-radius: 999px;
+            background: #ff2a23;
+            box-shadow: 0 0 8px rgba(255,42,35,0.45);
+        }
+        """,
+        "bodyweight": """
+        .st-key-mobile_btn_bodyweight button {
+            border-color: #ff3932 !important;
+            color: #ff4b45 !important;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(255,50,40,0.28), rgba(255,50,40,0.10) 38%, rgba(0,0,0,0) 74%),
+                #171216 !important;
+            box-shadow: inset 0 -4px 0 #ff2a23, 0 0 18px rgba(255,42,35,0.14) !important;
+        }
+        .st-key-mobile_btn_bodyweight button::after {
+            content: "";
+            position: absolute;
+            left: 38%;
+            right: 38%;
+            bottom: 0.35rem;
+            height: 4px;
+            border-radius: 999px;
+            background: #ff2a23;
+            box-shadow: 0 0 8px rgba(255,42,35,0.45);
+        }
+        """,
+    }
 
     nav_css = (
         nav_css
@@ -816,23 +767,46 @@ def render_mobile_navigation():
         .replace("__ICON_PROGRESS__", icon_uris["progress"])
         .replace("__ICON_HISTORY__", icon_uris["history"])
         .replace("__ICON_BODY__", icon_uris["bodyweight"])
+        .replace("__ACTIVE_MOBILE_CSS__", active_mobile_css[active])
     )
 
     st.markdown(nav_css, unsafe_allow_html=True)
 
-    selected = st.radio(
-        "Navigation",
-        options,
-        index=options.index(active),
-        format_func=lambda value: labels[value],
+    with st.container(
+        key="mobile_nav_row_1",
         horizontal=True,
-        label_visibility="collapsed",
-        key="mobile_nav_radio",
-    )
+        wrap=False,
+        horizontal_alignment="distribute",
+        vertical_alignment="center",
+        gap="xsmall",
+    ):
+        with st.container(key="mobile_btn_log", width="stretch"):
+            if st.button("Log Workout", key="mobile_nav_log", width="stretch"):
+                st.session_state["active_section"] = "log"
+                st.rerun()
 
-    if selected != active:
-        st.session_state["active_section"] = selected
-        st.rerun()
+        with st.container(key="mobile_btn_progress", width="stretch"):
+            if st.button("Progress", key="mobile_nav_progress", width="stretch"):
+                st.session_state["active_section"] = "progress"
+                st.rerun()
+
+    with st.container(
+        key="mobile_nav_row_2",
+        horizontal=True,
+        wrap=False,
+        horizontal_alignment="distribute",
+        vertical_alignment="center",
+        gap="xsmall",
+    ):
+        with st.container(key="mobile_btn_history", width="stretch"):
+            if st.button("History", key="mobile_nav_history", width="stretch"):
+                st.session_state["active_section"] = "history"
+                st.rerun()
+
+        with st.container(key="mobile_btn_bodyweight", width="stretch"):
+            if st.button("Body Weight", key="mobile_nav_bodyweight", width="stretch"):
+                st.session_state["active_section"] = "bodyweight"
+                st.rerun()
 
 
 if mobile:

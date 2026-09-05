@@ -36,216 +36,339 @@ def load_exercises() -> list[str]:
     return sorted(combined, key=str.casefold)
 
 
+def _blank_set(
+    weight_kg: float = 0.0,
+    reps: int = 0,
+    rir: float | None = 0.0,
+) -> dict:
+    return {
+        "weight_kg": float(weight_kg or 0.0),
+        "reps": int(reps or 0),
+        "rir": 0.0 if rir is None else float(rir),
+    }
+
+
 def _normalize_initial_data(
     initial_data: pd.DataFrame | None,
     exercises: list[str],
 ) -> list[dict]:
+    """
+    Convert the existing flat workout rows into exercise groups.
+
+    The database format remains unchanged. This grouping exists only for
+    the workout-entry UI.
+    """
     if initial_data is None or initial_data.empty:
         return [
             {
                 "exercise": exercises[0] if exercises else "",
-                "set_number": 1,
-                "weight_kg": 0.0,
-                "reps": 0,
-                "rir": 0.0,
+                "sets": [_blank_set()],
             }
         ]
 
-    rows = []
+    groups: list[dict] = []
+    group_lookup: dict[str, int] = {}
+
     for _, row in initial_data.iterrows():
-        rows.append(
-            {
-                "exercise": str(row.get("exercise", "")),
-                "set_number": int(row.get("set_number", len(rows) + 1)),
-                "weight_kg": float(row.get("weight_kg", 0.0) or 0.0),
-                "reps": int(row.get("reps", 0) or 0),
-                "rir": 0.0 if pd.isna(row.get("rir")) else float(row.get("rir")),
-            }
-        )
-    return rows
+        exercise = str(row.get("exercise", "") or "").strip()
+        if not exercise:
+            continue
 
+        key = exercise.casefold()
 
-def _mobile_editor(
-    key: str,
-    initial_data: pd.DataFrame | None,
-    exercises: list[str],
-) -> pd.DataFrame:
-    state_key = f"{key}_rows"
-
-    if state_key not in st.session_state:
-        st.session_state[state_key] = _normalize_initial_data(initial_data, exercises)
-
-    rows = st.session_state[state_key]
-    output_rows = []
-
-    for idx, row in enumerate(rows):
-        st.markdown(f"#### Set {idx + 1}")
-
-        exercise_index = (
-            exercises.index(row["exercise"])
-            if row.get("exercise") in exercises
-            else 0
-        )
-
-        exercise = st.selectbox(
-            "Exercise",
-            exercises,
-            index=exercise_index,
-            key=f"{key}_exercise_{idx}",
-        )
-
-        weight_col, reps_col = st.columns([1.35, 0.65], gap="small")
-
-        with weight_col:
-            weight = st.number_input(
-                "Weight (kg)",
-                min_value=0.0,
-                step=0.5,
-                value=float(row.get("weight_kg", 0.0)),
-                format="%.1f",
-                key=f"{key}_weight_{idx}",
-            )
-
-        with reps_col:
-            reps = st.number_input(
-                "Reps",
-                min_value=0,
-                step=1,
-                value=int(row.get("reps", 0)),
-                key=f"{key}_reps_{idx}",
-            )
-
-        rir = st.number_input(
-            "RIR",
-            min_value=0.0,
-            max_value=10.0,
-            step=0.5,
-            value=float(row.get("rir", 0.0)),
-            format="%.1f",
-            key=f"{key}_rir_{idx}",
-        )
-
-        output_rows.append(
-            {
-                "exercise": exercise,
-                "set_number": idx + 1,
-                "weight_kg": weight,
-                "reps": reps,
-                "rir": rir,
-            }
-        )
-
-        st.divider()
-
-    st.session_state[state_key] = output_rows
-
-    add_col, remove_col = st.columns(2, gap="small")
-
-    with add_col:
-        if st.button(
-            "＋ Add set",
-            key=f"{key}_add_set",
-            use_container_width=True,
-        ):
-            prev = output_rows[-1]
-            st.session_state[state_key].append(
+        if key not in group_lookup:
+            group_lookup[key] = len(groups)
+            groups.append(
                 {
-                    "exercise": prev["exercise"],
-                    "set_number": len(output_rows) + 1,
-                    "weight_kg": prev["weight_kg"],
-                    "reps": 0,
-                    "rir": prev["rir"],
+                    "exercise": exercise,
+                    "sets": [],
                 }
             )
-            st.rerun()
 
-    with remove_col:
-        if st.button(
-            "− Remove",
-            key=f"{key}_remove_set",
-            use_container_width=True,
-            disabled=len(output_rows) <= 1,
-        ):
-            st.session_state[state_key] = output_rows[:-1]
-            st.rerun()
+        rir_value = row.get("rir")
+        rir = None if pd.isna(rir_value) else float(rir_value)
 
-    return pd.DataFrame(output_rows)
-
-
-def _desktop_editor(
-    key: str,
-    initial_data: pd.DataFrame | None,
-    exercises: list[str],
-) -> pd.DataFrame:
-    if initial_data is None:
-        starter = pd.DataFrame(
-            [
-                {
-                    "exercise": exercises[0] if exercises else "",
-                    "set_number": 1,
-                    "weight_kg": 0.0,
-                    "reps": 0,
-                    "rir": None,
-                }
-            ]
+        groups[group_lookup[key]]["sets"].append(
+            _blank_set(
+                weight_kg=float(row.get("weight_kg", 0.0) or 0.0),
+                reps=int(row.get("reps", 0) or 0),
+                rir=rir,
+            )
         )
-    else:
-        starter = initial_data.copy()
 
-    return st.data_editor(
-        starter,
-        num_rows="dynamic",
-        use_container_width=True,
-        key=key,
-        column_config={
-            "exercise": st.column_config.SelectboxColumn(
-                "Exercise",
-                options=exercises,
-                required=True,
-                width="large",
-            ),
-            "set_number": st.column_config.NumberColumn(
-                "Set",
-                min_value=1,
-                step=1,
-                required=True,
-                width="small",
-            ),
-            "weight_kg": st.column_config.NumberColumn(
-                "Weight (kg)",
-                min_value=0.0,
-                step=0.5,
-                format="%.1f",
-                required=True,
-                width="small",
-            ),
-            "reps": st.column_config.NumberColumn(
-                "Reps",
-                min_value=0,
-                step=1,
-                required=True,
-                width="small",
-            ),
-            "rir": st.column_config.NumberColumn(
-                "RIR",
-                min_value=0.0,
-                max_value=10.0,
-                step=0.5,
-                format="%.1f",
-                width="small",
-            ),
-        },
-    )
+    if not groups:
+        return [
+            {
+                "exercise": exercises[0] if exercises else "",
+                "sets": [_blank_set()],
+            }
+        ]
+
+    for group in groups:
+        if not group["sets"]:
+            group["sets"] = [_blank_set()]
+
+    return groups
+
+
+def _next_default_exercise(groups: list[dict], exercises: list[str]) -> str:
+    selected = {
+        str(group.get("exercise", "")).casefold()
+        for group in groups
+        if group.get("exercise")
+    }
+
+    for exercise in exercises:
+        if exercise.casefold() not in selected:
+            return exercise
+
+    return exercises[0] if exercises else ""
 
 
 def workout_editor(
     key: str = "workout_editor",
     initial_data: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
+    """
+    Exercise-first workout editor.
+
+    An exercise is selected once, then all of its sets are entered underneath it.
+    The returned value is still the same flat DataFrame used by the rest of the
+    app/database:
+
+        exercise | set_number | weight_kg | reps | rir
+
+    No database changes are required.
+    """
     exercises = load_exercises()
-    mobile = bool(st.session_state.get("is_mobile", False))
+    state_key = f"{key}_groups"
 
-    if mobile:
-        return _mobile_editor(key, initial_data, exercises)
+    if state_key not in st.session_state:
+        st.session_state[state_key] = _normalize_initial_data(initial_data, exercises)
 
-    return _desktop_editor(key, initial_data, exercises)
+    groups = st.session_state[state_key]
+
+    st.markdown(
+        """
+        <style>
+        .rpl-exercise-card-title {
+            margin-top: 0.2rem;
+            margin-bottom: 0.4rem;
+            color: #ffffff;
+            font-size: 0.80rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .rpl-set-title {
+            color: #aeb2b9;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.10em;
+            text-transform: uppercase;
+            margin-top: 0.25rem;
+            margin-bottom: -0.25rem;
+        }
+
+        div[data-testid="stVerticalBlockBorderWrapper"]:has(.rpl-exercise-card-title) {
+            background:
+                radial-gradient(circle at 8% 0%, rgba(255, 42, 35, 0.09), transparent 31%),
+                #101318;
+            border-color: #30343b !important;
+        }
+
+        @media (max-width: 768px) {
+            .rpl-exercise-card-title {
+                font-size: 0.76rem;
+                margin-bottom: 0.25rem;
+            }
+
+            div[class*="st-key-"][class*="_set_row_"] div[data-testid="stHorizontalBlock"] {
+                flex-wrap: nowrap !important;
+                gap: 0.35rem !important;
+            }
+
+            div[class*="st-key-"][class*="_set_row_"] div[data-testid="column"] {
+                min-width: 0 !important;
+                width: auto !important;
+                flex: 1 1 0 !important;
+            }
+
+            div[class*="st-key-"][class*="_exercise_actions_"] div[data-testid="stHorizontalBlock"] {
+                flex-wrap: nowrap !important;
+                gap: 0.35rem !important;
+            }
+
+            div[class*="st-key-"][class*="_exercise_actions_"] div[data-testid="column"] {
+                min-width: 0 !important;
+                width: auto !important;
+                flex: 1 1 0 !important;
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    output_groups: list[dict] = []
+    output_rows: list[dict] = []
+
+    for exercise_idx, group in enumerate(groups):
+        with st.container(border=True):
+            st.markdown(
+                f'<div class="rpl-exercise-card-title">Exercise {exercise_idx + 1}</div>',
+                unsafe_allow_html=True,
+            )
+
+            current_exercise = str(group.get("exercise", "") or "")
+            exercise_index = (
+                exercises.index(current_exercise)
+                if current_exercise in exercises
+                else 0
+            )
+
+            selected_exercise = st.selectbox(
+                "Exercise",
+                exercises,
+                index=exercise_index if exercises else None,
+                key=f"{key}_exercise_{exercise_idx}",
+                placeholder="Select exercise",
+            )
+
+            current_sets = group.get("sets") or [_blank_set()]
+            updated_sets: list[dict] = []
+
+            for set_idx, set_row in enumerate(current_sets):
+                st.markdown(
+                    f'<div class="rpl-set-title">Set {set_idx + 1}</div>',
+                    unsafe_allow_html=True,
+                )
+
+                with st.container(key=f"{key}_set_row_{exercise_idx}_{set_idx}"):
+                    weight_col, reps_col, rir_col = st.columns([1.2, 1, 1])
+
+                    with weight_col:
+                        weight = st.number_input(
+                            "Weight (kg)",
+                            min_value=0.0,
+                            step=0.5,
+                            value=float(set_row.get("weight_kg", 0.0)),
+                            format="%.1f",
+                            key=f"{key}_weight_{exercise_idx}_{set_idx}",
+                        )
+
+                    with reps_col:
+                        reps = st.number_input(
+                            "Reps",
+                            min_value=0,
+                            step=1,
+                            value=int(set_row.get("reps", 0)),
+                            key=f"{key}_reps_{exercise_idx}_{set_idx}",
+                        )
+
+                    with rir_col:
+                        rir = st.number_input(
+                            "RIR",
+                            min_value=0.0,
+                            max_value=10.0,
+                            step=0.5,
+                            value=float(set_row.get("rir", 0.0) or 0.0),
+                            format="%.1f",
+                            key=f"{key}_rir_{exercise_idx}_{set_idx}",
+                        )
+
+                updated_sets.append(
+                    {
+                        "weight_kg": weight,
+                        "reps": reps,
+                        "rir": rir,
+                    }
+                )
+
+                output_rows.append(
+                    {
+                        "exercise": selected_exercise or "",
+                        "set_number": set_idx + 1,
+                        "weight_kg": weight,
+                        "reps": reps,
+                        "rir": rir,
+                    }
+                )
+
+            output_groups.append(
+                {
+                    "exercise": selected_exercise or "",
+                    "sets": updated_sets,
+                }
+            )
+
+            with st.container(key=f"{key}_exercise_actions_{exercise_idx}"):
+                add_set_col, remove_set_col, remove_exercise_col = st.columns(3)
+
+                with add_set_col:
+                    if st.button(
+                        "＋ Add set",
+                        use_container_width=True,
+                        key=f"{key}_add_set_{exercise_idx}",
+                    ):
+                        # Persist everything already typed before changing the shape.
+                        st.session_state[state_key] = output_groups + groups[len(output_groups):]
+
+                        previous = updated_sets[-1] if updated_sets else _blank_set()
+                        st.session_state[state_key][exercise_idx]["sets"].append(
+                            {
+                                # Copy the previous weight and RIR to speed up logging.
+                                "weight_kg": previous["weight_kg"],
+                                "reps": 0,
+                                "rir": previous["rir"],
+                            }
+                        )
+                        st.rerun()
+
+                with remove_set_col:
+                    if st.button(
+                        "− Set",
+                        use_container_width=True,
+                        disabled=len(updated_sets) <= 1,
+                        key=f"{key}_remove_set_{exercise_idx}",
+                    ):
+                        st.session_state[state_key] = output_groups + groups[len(output_groups):]
+                        st.session_state[state_key][exercise_idx]["sets"] = updated_sets[:-1]
+                        st.rerun()
+
+                with remove_exercise_col:
+                    if st.button(
+                        "✕ Exercise",
+                        use_container_width=True,
+                        disabled=len(groups) <= 1,
+                        key=f"{key}_remove_exercise_{exercise_idx}",
+                    ):
+                        st.session_state[state_key] = output_groups + groups[len(output_groups):]
+                        del st.session_state[state_key][exercise_idx]
+                        st.rerun()
+
+        st.markdown('<div style="height:0.35rem;"></div>', unsafe_allow_html=True)
+
+    # Keep all current widget values synchronized in session state.
+    st.session_state[state_key] = output_groups
+
+    if st.button(
+        "＋ Add exercise",
+        type="secondary",
+        use_container_width=True,
+        key=f"{key}_add_exercise",
+    ):
+        next_exercise = _next_default_exercise(output_groups, exercises)
+        st.session_state[state_key].append(
+            {
+                "exercise": next_exercise,
+                "sets": [_blank_set()],
+            }
+        )
+        st.rerun()
+
+    return pd.DataFrame(
+        output_rows,
+        columns=["exercise", "set_number", "weight_kg", "reps", "rir"],
+    )

@@ -43,31 +43,40 @@ def render():
         title = f"{workout_date} — {workout_name or 'Workout'}"
 
         with st.expander(title, expanded=(selected_date != "All")):
-            display = workout[
-                [
-                    "exercise",
-                    "set_number",
-                    "weight_kg",
-                    "reps",
-                    "rir",
-                    "volume_kg",
+            # Show the workout exercise-by-exercise rather than interleaving
+            # Set 1 for every exercise, then Set 2 for every exercise, etc.
+            exercise_order = workout["exercise"].drop_duplicates().tolist()
+
+            for exercise_name in exercise_order:
+                exercise_sets = workout[
+                    workout["exercise"] == exercise_name
+                ].sort_values("set_number").copy()
+
+                st.markdown(f"#### {exercise_name}")
+
+                display = exercise_sets[
+                    [
+                        "set_number",
+                        "weight_kg",
+                        "reps",
+                        "rir",
+                        "volume_kg",
+                    ]
+                ].copy()
+
+                display.columns = [
+                    "Set",
+                    "Weight (kg)",
+                    "Reps",
+                    "RIR",
+                    "Volume (kg)",
                 ]
-            ].copy()
 
-            display.columns = [
-                "Exercise",
-                "Set",
-                "Weight (kg)",
-                "Reps",
-                "RIR",
-                "Volume (kg)",
-            ]
-
-            st.dataframe(
-                display,
-                use_container_width=True,
-                hide_index=True,
-            )
+                st.dataframe(
+                    display,
+                    use_container_width=True,
+                    hide_index=True,
+                )
 
             notes = workout["notes"].iloc[0]
             if notes:

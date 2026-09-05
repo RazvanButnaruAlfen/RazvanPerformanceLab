@@ -43,40 +43,53 @@ def render():
         title = f"{workout_date} — {workout_name or 'Workout'}"
 
         with st.expander(title, expanded=(selected_date != "All")):
-            # Show the workout exercise-by-exercise rather than interleaving
-            # Set 1 for every exercise, then Set 2 for every exercise, etc.
+            # Force rows into exercise-first order, then set-number order.
+            #
+            # We preserve the order in which each exercise first appeared in the
+            # workout instead of sorting alphabetically.
             exercise_order = workout["exercise"].drop_duplicates().tolist()
+            exercise_rank = {
+                exercise_name: index
+                for index, exercise_name in enumerate(exercise_order)
+            }
 
-            for exercise_name in exercise_order:
-                exercise_sets = workout[
-                    workout["exercise"] == exercise_name
-                ].sort_values("set_number").copy()
+            ordered_workout = workout.copy()
+            ordered_workout["_exercise_order"] = (
+                ordered_workout["exercise"]
+                .map(exercise_rank)
+                .fillna(len(exercise_rank))
+            )
 
-                st.markdown(f"#### {exercise_name}")
+            ordered_workout = ordered_workout.sort_values(
+                by=["_exercise_order", "set_number"],
+                kind="stable",
+            )
 
-                display = exercise_sets[
-                    [
-                        "set_number",
-                        "weight_kg",
-                        "reps",
-                        "rir",
-                        "volume_kg",
-                    ]
-                ].copy()
-
-                display.columns = [
-                    "Set",
-                    "Weight (kg)",
-                    "Reps",
-                    "RIR",
-                    "Volume (kg)",
+            display = ordered_workout[
+                [
+                    "exercise",
+                    "set_number",
+                    "weight_kg",
+                    "reps",
+                    "rir",
+                    "volume_kg",
                 ]
+            ].copy()
 
-                st.dataframe(
-                    display,
-                    use_container_width=True,
-                    hide_index=True,
-                )
+            display.columns = [
+                "Exercise",
+                "Set",
+                "Weight (kg)",
+                "Reps",
+                "RIR",
+                "Volume (kg)",
+            ]
+
+            st.dataframe(
+                display,
+                use_container_width=True,
+                hide_index=True,
+            )
 
             notes = workout["notes"].iloc[0]
             if notes:

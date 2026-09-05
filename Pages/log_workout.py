@@ -2,6 +2,7 @@ from datetime import date
 
 import streamlit as st
 
+from Components.session_timer import render_session_timer
 from Components.workout_form import load_exercises, workout_editor
 from Services.database import add_user_exercise, init_db, save_workout
 
@@ -22,6 +23,8 @@ def render():
 
     st.subheader("Log Workout")
     st.caption("Record working sets so each session can be compared with the previous one.")
+
+    render_session_timer()
 
     version = _version()
 

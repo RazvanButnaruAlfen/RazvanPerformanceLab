@@ -181,10 +181,12 @@ def _add_exercise(key: str, exercises: list[str]) -> None:
         }
     )
     st.session_state[f"{key}_groups"] = groups
+    st.session_state[f"{key}_active_exercise"] = len(groups) - 1
 
 
 def _add_set(key: str, exercise_idx: int) -> None:
     groups = _sync_widgets_to_groups(key)
+    st.session_state[f"{key}_active_exercise"] = exercise_idx
     if exercise_idx >= len(groups):
         return
 
@@ -202,6 +204,7 @@ def _add_set(key: str, exercise_idx: int) -> None:
 
 def _remove_set(key: str, exercise_idx: int) -> None:
     groups = _sync_widgets_to_groups(key)
+    st.session_state[f"{key}_active_exercise"] = exercise_idx
     if exercise_idx >= len(groups):
         return
 
@@ -219,6 +222,10 @@ def _remove_exercise(key: str, exercise_idx: int) -> None:
 
     groups.pop(exercise_idx)
     st.session_state[f"{key}_groups"] = groups
+    st.session_state[f"{key}_active_exercise"] = min(
+        exercise_idx,
+        max(0, len(groups) - 1),
+    )
 
     # Exercise indices shift after deletion. Remove old widget keys so Streamlit
     # rebuilds the remaining cards from the synchronized group data.
@@ -250,7 +257,15 @@ def workout_editor(
     if state_key not in st.session_state:
         st.session_state[state_key] = _normalize_initial_data(initial_data, exercises)
 
+    active_key = f"{key}_active_exercise"
+    if active_key not in st.session_state:
+        st.session_state[active_key] = max(0, len(st.session_state[state_key]) - 1)
+
     groups = st.session_state[state_key]
+    active_exercise = min(
+        int(st.session_state.get(active_key, 0)),
+        max(0, len(groups) - 1),
+    )
 
     st.markdown(
         """
@@ -275,11 +290,16 @@ def workout_editor(
             margin-bottom: -0.25rem;
         }
 
-        div[data-testid="stVerticalBlockBorderWrapper"]:has(.rpl-exercise-card-title) {
+        div[data-testid="stExpander"]:has(.rpl-exercise-card-title) {
             background:
                 radial-gradient(circle at 8% 0%, rgba(255, 42, 35, 0.09), transparent 31%),
                 #101318;
-            border-color: #30343b !important;
+            border: 1px solid #30343b !important;
+            border-radius: 12px !important;
+        }
+
+        div[data-testid="stExpander"] summary {
+            font-weight: 800 !important;
         }
 
         @media (max-width: 768px) {
@@ -309,13 +329,18 @@ def workout_editor(
     output_rows: list[dict] = []
 
     for exercise_idx, group in enumerate(groups):
-        with st.container(border=True):
+        current_exercise = str(group.get("exercise", "") or "")
+        exercise_label = current_exercise.strip() or f"Exercise {exercise_idx + 1}"
+
+        with st.expander(
+            f"{exercise_idx + 1}. {exercise_label}",
+            expanded=(exercise_idx == active_exercise),
+        ):
             st.markdown(
                 f'<div class="rpl-exercise-card-title">Exercise {exercise_idx + 1}</div>',
                 unsafe_allow_html=True,
             )
 
-            current_exercise = str(group.get("exercise", "") or "")
             exercise_index = exercises.index(current_exercise) if current_exercise in exercises else 0
 
             selected_exercise = st.selectbox(

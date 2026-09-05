@@ -43,10 +43,7 @@ def render():
         title = f"{workout_date} — {workout_name or 'Workout'}"
 
         with st.expander(title, expanded=(selected_date != "All")):
-            # Force rows into exercise-first order, then set-number order.
-            #
-            # We preserve the order in which each exercise first appeared in the
-            # workout instead of sorting alphabetically.
+            # Keep each exercise together, then sort its sets numerically.
             exercise_order = workout["exercise"].drop_duplicates().tolist()
             exercise_rank = {
                 exercise_name: index
@@ -89,6 +86,26 @@ def render():
                 display,
                 use_container_width=True,
                 hide_index=True,
+            )
+
+            export = display.copy()
+            export.insert(0, "Workout Date", workout_date)
+            export.insert(1, "Workout Name", workout_name or "Workout")
+
+            csv_bytes = export.to_csv(index=False).encode("utf-8")
+
+            safe_name = "".join(
+                char if char.isalnum() or char in ("-", "_") else "_"
+                for char in (workout_name or "workout").strip()
+            ).strip("_") or "workout"
+
+            st.download_button(
+                "⬇ Export workout CSV",
+                data=csv_bytes,
+                file_name=f"{workout_date}_{safe_name}.csv",
+                mime="text/csv",
+                use_container_width=True,
+                key=f"download_workout_{workout_id}",
             )
 
             notes = workout["notes"].iloc[0]

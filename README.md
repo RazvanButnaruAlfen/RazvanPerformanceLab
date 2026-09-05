@@ -1,54 +1,25 @@
-# Razvan Performance Lab
+# Exercise collapse + History grouping
 
-Responsive Streamlit training tracker for desktop and mobile.
-
-## Main navigation
-
-The app uses horizontal tabs instead of the Streamlit sidebar:
-
-- Log Workout
-- Progress
-- History
-- Body
-
-The sidebar is hidden.
-
-## Responsive behavior
-
-Desktop:
-- Wide page layout
-- Multiple columns where useful
-- Full-width workout editor
-
-Mobile:
-- Tabs scroll horizontally when needed
-- Columns stack vertically
-- Buttons expand to full width
-- Reduced page padding
-- Data tables/editors can scroll horizontally
-- Inputs use mobile-friendly sizing
-
-## Run locally
-
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-## Streamlit Cloud
-
-Set the main file path to:
+Replace:
 
 ```text
-app.py
+Components/workout_form.py
+Pages/workout_history.py
 ```
 
-For permanent storage, configure Supabase secrets in Streamlit Cloud:
+Changes:
 
-```toml
-[supabase]
-url = "https://YOUR_PROJECT.supabase.co"
-key = "YOUR_SUPABASE_ANON_KEY"
-```
+1. Workout entry
+- Each exercise is now a collapsible section.
+- The current/latest exercise is expanded.
+- When you press `Add exercise`, the previous exercise collapses and the new exercise opens.
+- Add/remove set keeps the current exercise open.
+- Existing values are preserved by the callback-based state handling from the previous fix.
 
-Run `supabase_schema.sql` once in the Supabase SQL Editor.
+2. History
+- Sets are grouped by exercise.
+- Each exercise gets its own heading and set table.
+- History no longer visually interleaves all Set 1 rows, then all Set 2 rows, etc.
+- Exercise order follows the order in which exercises were recorded.
+
+No Supabase/database changes are required.
